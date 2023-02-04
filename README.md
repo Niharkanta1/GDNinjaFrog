@@ -1,1 +1,1 @@
-"# NinjaFrog Godot Project" 
+# NinjaFrog Godot Project

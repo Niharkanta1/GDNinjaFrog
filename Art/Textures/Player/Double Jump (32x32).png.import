@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Run (32x32).png-d830764049b0e8c46e9c6cf599d66576.stex"
+path="res://.import/Double Jump (32x32).png-ef0dce242205423ce92f7da656490c75.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Texture/Player/Run (32x32).png"
-dest_files=[ "res://.import/Run (32x32).png-d830764049b0e8c46e9c6cf599d66576.stex" ]
+source_file="res://Art/Textures/Player/Double Jump (32x32).png"
+dest_files=[ "res://.import/Double Jump (32x32).png-ef0dce242205423ce92f7da656490c75.stex" ]
 
 [params]
 

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Terrain (16x16).png-4b94d2540a23d7c432aa71e4e0b21bc7.stex"
+path="res://.import/Hit (32x32).png-b758aceb8b394972ed32e9c57ba26f3b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Terrain/Terrain (16x16).png"
-dest_files=[ "res://.import/Terrain (16x16).png-4b94d2540a23d7c432aa71e4e0b21bc7.stex" ]
+source_file="res://Art/Textures/Player/Hit (32x32).png"
+dest_files=[ "res://.import/Hit (32x32).png-b758aceb8b394972ed32e9c57ba26f3b.stex" ]
 
 [params]
 

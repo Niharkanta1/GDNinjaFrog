@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Purple.png-6a75a4a6ff6068f0f9114d5b1872949c.stex"
+path="res://.import/Idle (32x32).png-92cda4c07783731679cbfcb4e036e315.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Background/Purple.png"
-dest_files=[ "res://.import/Purple.png-6a75a4a6ff6068f0f9114d5b1872949c.stex" ]
+source_file="res://Art/Textures/Player/Idle (32x32).png"
+dest_files=[ "res://.import/Idle (32x32).png-92cda4c07783731679cbfcb4e036e315.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

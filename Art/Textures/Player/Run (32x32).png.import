@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Yellow.png-c3e45757b69e21fb5291ee999d0cecbc.stex"
+path="res://.import/Run (32x32).png-ece17494cc3d940583feda7a9237eb0f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Background/Yellow.png"
-dest_files=[ "res://.import/Yellow.png-c3e45757b69e21fb5291ee999d0cecbc.stex" ]
+source_file="res://Art/Textures/Player/Run (32x32).png"
+dest_files=[ "res://.import/Run (32x32).png-ece17494cc3d940583feda7a9237eb0f.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

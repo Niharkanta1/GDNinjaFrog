@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Brown.png-fa98678c9e997a847dab33ca6e2e7c6e.stex"
+path="res://.import/Hit 1 (36x30).png-1c18b3c0536f9a4cf50dde0d1d513db1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Background/Brown.png"
-dest_files=[ "res://.import/Brown.png-fa98678c9e997a847dab33ca6e2e7c6e.stex" ]
+source_file="res://Art/Textures/Enemies/AngryPig/Hit 1 (36x30).png"
+dest_files=[ "res://.import/Hit 1 (36x30).png-1c18b3c0536f9a4cf50dde0d1d513db1.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

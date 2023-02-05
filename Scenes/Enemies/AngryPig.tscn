@@ -1,0 +1,437 @@
+[gd_scene load_steps=73 format=2]
+
+[ext_resource path="res://Art/Textures/Enemies/AngryPig/Idle (36x30).png" type="Texture" id=1]
+[ext_resource path="res://Art/Textures/Enemies/AngryPig/Run (36x30).png" type="Texture" id=2]
+[ext_resource path="res://Art/Textures/Enemies/AngryPig/Hit 1 (36x30).png" type="Texture" id=3]
+[ext_resource path="res://Art/Textures/Enemies/AngryPig/Walk (36x30).png" type="Texture" id=4]
+[ext_resource path="res://Art/Textures/Enemies/AngryPig/Hit 2 (36x30).png" type="Texture" id=5]
+[ext_resource path="res://Scenes/Enemies/AngryPig.cs" type="Script" id=6]
+
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 3 )
+region = Rect2( 36, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 72, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 108, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 3 )
+region = Rect2( 144, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=45]
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=46]
+atlas = ExtResource( 5 )
+region = Rect2( 36, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=47]
+atlas = ExtResource( 5 )
+region = Rect2( 72, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=48]
+atlas = ExtResource( 5 )
+region = Rect2( 108, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=49]
+atlas = ExtResource( 5 )
+region = Rect2( 144, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 1 )
+region = Rect2( 36, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 1 )
+region = Rect2( 72, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 1 )
+region = Rect2( 108, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 1 )
+region = Rect2( 144, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 1 )
+region = Rect2( 180, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 1 )
+region = Rect2( 216, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 1 )
+region = Rect2( 252, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 1 )
+region = Rect2( 288, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=15]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=16]
+atlas = ExtResource( 2 )
+region = Rect2( 36, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=17]
+atlas = ExtResource( 2 )
+region = Rect2( 72, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 2 )
+region = Rect2( 108, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 2 )
+region = Rect2( 144, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=20]
+atlas = ExtResource( 2 )
+region = Rect2( 180, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=21]
+atlas = ExtResource( 2 )
+region = Rect2( 216, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=22]
+atlas = ExtResource( 2 )
+region = Rect2( 252, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 2 )
+region = Rect2( 288, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=24]
+atlas = ExtResource( 2 )
+region = Rect2( 324, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=25]
+atlas = ExtResource( 2 )
+region = Rect2( 360, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=26]
+atlas = ExtResource( 2 )
+region = Rect2( 396, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=27]
+atlas = ExtResource( 4 )
+region = Rect2( 0, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=28]
+atlas = ExtResource( 4 )
+region = Rect2( 36, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=29]
+atlas = ExtResource( 4 )
+region = Rect2( 72, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=30]
+atlas = ExtResource( 4 )
+region = Rect2( 108, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=31]
+atlas = ExtResource( 4 )
+region = Rect2( 144, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=32]
+atlas = ExtResource( 4 )
+region = Rect2( 180, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=33]
+atlas = ExtResource( 4 )
+region = Rect2( 216, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=34]
+atlas = ExtResource( 4 )
+region = Rect2( 252, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=35]
+atlas = ExtResource( 4 )
+region = Rect2( 288, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=36]
+atlas = ExtResource( 4 )
+region = Rect2( 324, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=37]
+atlas = ExtResource( 4 )
+region = Rect2( 360, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=38]
+atlas = ExtResource( 4 )
+region = Rect2( 396, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=39]
+atlas = ExtResource( 4 )
+region = Rect2( 432, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=40]
+atlas = ExtResource( 4 )
+region = Rect2( 468, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=41]
+atlas = ExtResource( 4 )
+region = Rect2( 504, 0, 36, 30 )
+
+[sub_resource type="AtlasTexture" id=42]
+atlas = ExtResource( 4 )
+region = Rect2( 540, 0, 36, 30 )
+
+[sub_resource type="SpriteFrames" id=43]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ) ],
+"loop": false,
+"name": "Hit1",
+"speed": 10.0
+}, {
+"frames": [ SubResource( 45 ), SubResource( 46 ), SubResource( 47 ), SubResource( 48 ), SubResource( 49 ) ],
+"loop": false,
+"name": "Hit2",
+"speed": 10.0
+}, {
+"frames": [ SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 14 ) ],
+"loop": true,
+"name": "Idle",
+"speed": 20.0
+}, {
+"frames": [ SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ), SubResource( 19 ), SubResource( 20 ), SubResource( 21 ), SubResource( 22 ), SubResource( 23 ), SubResource( 24 ), SubResource( 25 ), SubResource( 26 ) ],
+"loop": true,
+"name": "Run",
+"speed": 20.0
+}, {
+"frames": [ SubResource( 27 ), SubResource( 28 ), SubResource( 29 ), SubResource( 30 ), SubResource( 31 ), SubResource( 32 ), SubResource( 33 ), SubResource( 34 ), SubResource( 35 ), SubResource( 36 ), SubResource( 37 ), SubResource( 38 ), SubResource( 39 ), SubResource( 40 ), SubResource( 41 ), SubResource( 42 ) ],
+"loop": true,
+"name": "Walk",
+"speed": 20.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=50]
+extents = Vector2( 10.75, 12.75 )
+
+[sub_resource type="Animation" id=52]
+resource_name = "Hit1"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Hit1" ]
+}
+
+[sub_resource type="Animation" id=53]
+resource_name = "Hit2"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Hit2" ]
+}
+
+[sub_resource type="Animation" id=55]
+resource_name = "Idle"
+length = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Idle" ]
+}
+
+[sub_resource type="Animation" id=56]
+resource_name = "Run"
+length = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Run" ]
+}
+
+[sub_resource type="Animation" id=54]
+resource_name = "Walk"
+length = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Walk" ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=63]
+animation = "Hit2"
+
+[sub_resource type="AnimationNodeAnimation" id=64]
+animation = "Hit1"
+
+[sub_resource type="AnimationNodeOneShot" id=65]
+
+[sub_resource type="AnimationNodeBlend2" id=66]
+
+[sub_resource type="AnimationNodeAnimation" id=58]
+animation = "Walk"
+
+[sub_resource type="AnimationNodeAnimation" id=59]
+animation = "Run"
+
+[sub_resource type="AnimationNodeAnimation" id=60]
+animation = "Run"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id=61]
+blend_point_0/node = SubResource( 58 )
+blend_point_0/pos = 0.0
+blend_point_1/node = SubResource( 59 )
+blend_point_1/pos = 1.0
+blend_point_2/node = SubResource( 60 )
+blend_point_2/pos = -1.0
+
+[sub_resource type="AnimationNodeBlendTree" id=57]
+graph_offset = Vector2( -285.779, 39.2955 )
+nodes/Animation/node = SubResource( 64 )
+nodes/Animation/position = Vector2( -120, 280 )
+"nodes/Animation 2/node" = SubResource( 63 )
+"nodes/Animation 2/position" = Vector2( -140, 400 )
+nodes/Hit/node = SubResource( 65 )
+nodes/Hit/position = Vector2( 380, 220 )
+nodes/HitVariation/node = SubResource( 66 )
+nodes/HitVariation/position = Vector2( 120, 320 )
+nodes/PlayerDetected/node = SubResource( 61 )
+nodes/PlayerDetected/position = Vector2( 120, 120 )
+nodes/output/position = Vector2( 620, 120 )
+node_connections = [ "HitVariation", 0, "Animation", "HitVariation", 1, "Animation 2", "output", 0, "Hit", "Hit", 0, "PlayerDetected", "Hit", 1, "HitVariation" ]
+
+[sub_resource type="RectangleShape2D" id=51]
+extents = Vector2( 89.5, 18 )
+
+[sub_resource type="RectangleShape2D" id=62]
+extents = Vector2( 10.5, 5 )
+
+[sub_resource type="RectangleShape2D" id=67]
+extents = Vector2( 12, 11 )
+
+[node name="AngryPig" type="KinematicBody2D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource( 6 )
+waypoints = [ NodePath(""), NodePath("") ]
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 43 )
+animation = "Hit1"
+frame = 4
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0.25, 2.25 )
+shape = SubResource( 50 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+reset_on_save = false
+anims/Hit1 = SubResource( 52 )
+anims/Hit2 = SubResource( 53 )
+anims/Idle = SubResource( 55 )
+anims/Run = SubResource( 56 )
+anims/Walk = SubResource( 54 )
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 57 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/Hit/active = false
+parameters/HitVariation/blend_amount = 0
+parameters/PlayerDetected/blend_position = 0.0
+
+[node name="DetectionZone" type="Area2D" parent="."]
+collision_layer = 0
+monitorable = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionZone"]
+position = Vector2( -0.5, -4 )
+shape = SubResource( 51 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="JumpHitbox" type="Area2D" parent="."]
+position = Vector2( 0, -7 )
+collision_layer = 16
+collision_mask = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="JumpHitbox"]
+position = Vector2( 0.5, 0 )
+shape = SubResource( 62 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="EnemyCollisionHitbox" type="Area2D" parent="."]
+collision_layer = 0
+monitorable = false
+
+[node name="EnemyCollisionShape" type="CollisionShape2D" parent="EnemyCollisionHitbox"]
+position = Vector2( 0, 2 )
+shape = SubResource( 67 )
+
+[connection signal="body_shape_entered" from="DetectionZone" to="." method="OnDetectionZoneBodyShapeEntered"]
+[connection signal="body_shape_exited" from="DetectionZone" to="." method="OnDetectionZoneBodyShapeExited"]
+[connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]
+[connection signal="body_shape_entered" from="EnemyCollisionHitbox" to="." method="OnEnemyCollisionHitboxBodyShapeEntered"]

@@ -1,0 +1,172 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Scenes/Player/PlayerTwo-SpriteFrames.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://Scenes/Player/PlayerTwo.cs" type="Script" id=2]
+
+[sub_resource type="CapsuleShape2D" id=8]
+height = 4.0
+
+[sub_resource type="Animation" id=1]
+resource_name = "DoubleJump"
+length = 0.3
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "DoubleJump" ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "Fall"
+length = 0.05
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Fall" ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "Hit"
+length = 0.35
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Hit" ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "Idle"
+length = 0.55
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Idle" ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "Jump"
+length = 0.05
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Jump" ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "Run"
+length = 0.55
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Run" ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "WallSlide"
+length = 0.25
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "WallSlide" ]
+}
+
+[sub_resource type="RectangleShape2D" id=9]
+extents = Vector2( 7.25, 10 )
+
+[node name="PlayerTwo" type="KinematicBody2D"]
+collision_mask = 4
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 4 )
+shape = SubResource( 8 )
+
+[node name="Body" type="Node2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Body"]
+frames = ExtResource( 1 )
+animation = "Idle"
+frame = 8
+playing = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
+reset_on_save = false
+anims/DoubleJump = SubResource( 1 )
+anims/Fall = SubResource( 2 )
+anims/Hit = SubResource( 3 )
+anims/Idle = SubResource( 4 )
+anims/Jump = SubResource( 5 )
+anims/Run = SubResource( 6 )
+anims/WallSlide = SubResource( 7 )
+
+[node name="WallCheck" type="Node2D" parent="."]
+
+[node name="HitboxArea" type="Area2D" parent="."]
+collision_mask = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
+position = Vector2( 0.25, 5 )
+shape = SubResource( 9 )
+__meta__ = {
+"_edit_lock_": true
+}

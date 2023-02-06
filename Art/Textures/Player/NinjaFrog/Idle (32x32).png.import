@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Fall (32x32).png-2dc6ca0858ce19da938959ae1bae19cf.stex"
+path="res://.import/Idle (32x32).png-838a05db2e15536a55325eadf414a5ec.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Textures/Player/Fall (32x32).png"
-dest_files=[ "res://.import/Fall (32x32).png-2dc6ca0858ce19da938959ae1bae19cf.stex" ]
+source_file="res://Art/Textures/Player/NinjaFrog/Idle (32x32).png"
+dest_files=[ "res://.import/Idle (32x32).png-838a05db2e15536a55325eadf414a5ec.stex" ]
 
 [params]
 

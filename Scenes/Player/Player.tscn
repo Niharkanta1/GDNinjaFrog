@@ -1,12 +1,12 @@
-[gd_scene load_steps=75 format=2]
+[gd_scene load_steps=77 format=2]
 
-[ext_resource path="res://Art/Textures/Player/Idle (32x32).png" type="Texture" id=1]
-[ext_resource path="res://Art/Textures/Player/Double Jump (32x32).png" type="Texture" id=2]
-[ext_resource path="res://Art/Textures/Player/Fall (32x32).png" type="Texture" id=3]
-[ext_resource path="res://Art/Textures/Player/Hit (32x32).png" type="Texture" id=4]
-[ext_resource path="res://Art/Textures/Player/Wall Jump (32x32).png" type="Texture" id=5]
-[ext_resource path="res://Art/Textures/Player/Jump (32x32).png" type="Texture" id=6]
-[ext_resource path="res://Art/Textures/Player/Run (32x32).png" type="Texture" id=7]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Idle (32x32).png" type="Texture" id=1]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Double Jump (32x32).png" type="Texture" id=2]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Fall (32x32).png" type="Texture" id=3]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Hit (32x32).png" type="Texture" id=4]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Wall Jump (32x32).png" type="Texture" id=5]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Jump (32x32).png" type="Texture" id=6]
+[ext_resource path="res://Art/Textures/Player/NinjaFrog/Run (32x32).png" type="Texture" id=7]
 [ext_resource path="res://Scenes/Player/Player.cs" type="Script" id=8]
 [ext_resource path="res://Scenes/Player/Label.cs" type="Script" id=9]
 
@@ -376,6 +376,9 @@ animation = "DoubleJump"
 [sub_resource type="AnimationNodeAnimation" id=64]
 animation = "Hit"
 
+[sub_resource type="AnimationNodeAnimation" id=67]
+animation = "WallSlide"
+
 [sub_resource type="AnimationNodeAnimation" id=59]
 animation = "Jump"
 
@@ -404,8 +407,10 @@ blend_point_2/pos = -1.0
 
 [sub_resource type="AnimationNodeBlend3" id=60]
 
+[sub_resource type="AnimationNodeBlend2" id=66]
+
 [sub_resource type="AnimationNodeBlendTree" id=53]
-graph_offset = Vector2( -184.507, -197.657 )
+graph_offset = Vector2( -150.091, -235.648 )
 nodes/Animation/node = SubResource( 59 )
 nodes/Animation/position = Vector2( 0, -160 )
 "nodes/Animation 2/node" = SubResource( 58 )
@@ -413,17 +418,21 @@ nodes/Animation/position = Vector2( 0, -160 )
 "nodes/Animation 3/node" = SubResource( 61 )
 "nodes/Animation 3/position" = Vector2( 240, 80 )
 "nodes/Animation 4/node" = SubResource( 64 )
-"nodes/Animation 4/position" = Vector2( 480, 80 )
+"nodes/Animation 4/position" = Vector2( 800, 80 )
+"nodes/Animation 5/node" = SubResource( 67 )
+"nodes/Animation 5/position" = Vector2( 500, 80 )
 nodes/DoubleJump/node = SubResource( 62 )
 nodes/DoubleJump/position = Vector2( 460, -140 )
 nodes/Hit/node = SubResource( 65 )
-nodes/Hit/position = Vector2( 700, -140 )
+nodes/Hit/position = Vector2( 1000, -140 )
 nodes/MoveX/node = SubResource( 57 )
 nodes/MoveX/position = Vector2( -200, -40 )
 nodes/MoveY/node = SubResource( 60 )
 nodes/MoveY/position = Vector2( 280, -140 )
-nodes/output/position = Vector2( 1120, -140 )
-node_connections = [ "output", 0, "Hit", "Hit", 0, "DoubleJump", "Hit", 1, "Animation 4", "DoubleJump", 0, "MoveY", "DoubleJump", 1, "Animation 3", "MoveY", 0, "Animation", "MoveY", 1, "MoveX", "MoveY", 2, "Animation 2" ]
+nodes/WallSlide/node = SubResource( 66 )
+nodes/WallSlide/position = Vector2( 720, -140 )
+nodes/output/position = Vector2( 1260, -160 )
+node_connections = [ "output", 0, "Hit", "WallSlide", 0, "DoubleJump", "WallSlide", 1, "Animation 5", "Hit", 0, "WallSlide", "Hit", 1, "Animation 4", "DoubleJump", 0, "MoveY", "DoubleJump", 1, "Animation 3", "MoveY", 0, "Animation", "MoveY", 1, "MoveX", "MoveY", 2, "Animation 2" ]
 
 [sub_resource type="RectangleShape2D" id=63]
 extents = Vector2( 6, 1.5 )
@@ -436,6 +445,7 @@ health = 99
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 1 )
 animation = "Idle"
+frame = 2
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -462,6 +472,7 @@ parameters/DoubleJump/active = false
 parameters/Hit/active = false
 parameters/MoveX/blend_position = 0
 parameters/MoveY/blend_amount = 0.0
+parameters/WallSlide/blend_amount = 0
 
 [node name="Label" type="Label" parent="."]
 margin_left = -15.0

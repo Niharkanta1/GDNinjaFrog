@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Hit (32x32).png-b758aceb8b394972ed32e9c57ba26f3b.stex"
+path="res://.import/Double Jump (32x32).png-7cfa49fc0801d71b17627fe34ec2224e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Textures/Player/Hit (32x32).png"
-dest_files=[ "res://.import/Hit (32x32).png-b758aceb8b394972ed32e9c57ba26f3b.stex" ]
+source_file="res://Art/Textures/Player/Virtual Guy/Double Jump (32x32).png"
+dest_files=[ "res://.import/Double Jump (32x32).png-7cfa49fc0801d71b17627fe34ec2224e.stex" ]
 
 [params]
 

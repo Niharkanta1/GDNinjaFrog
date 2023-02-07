@@ -12,7 +12,8 @@ public class PlayerTwo : KinematicBody2D
     private Node2D body;
 
     [Export] private int gravity = 1000;
-    [Export] private int jumpSpeed = -200;
+    [Export] private int jumpSpeed = -350;
+    [Export] private int doubleJumpSpeed = -300;
     [Export] private int walkSpeed = 150;
     [Export] private int dashSpeed = 300;
     [Export] private int numDash = 1;
@@ -21,10 +22,23 @@ public class PlayerTwo : KinematicBody2D
     private int lookDirection = 1;
     private bool isAttacking = false;
     private bool isDashing = false;
+    private bool canJump = true;
+    private bool canDoubleJump = false;
 
-    private States currentState;
-    enum States { IDLE, WALK, FALL, JUMP, DOUBLEJUMP, DASH, WALLSLIDE, DEATH };
+    private States state;
+    public States CurrentState
+    {
+        get { return state; }
+        set
+        {
+            InitState(value);
+            state = value;
+            EmitSignal(nameof(OnStateChange), value.ToString());
+        }
+    }
+    public enum States { IDLE, RUN, FALL, JUMP, DOUBLEJUMP, DASH, WALLSLIDE, DEATH };
 
+    [Signal] public delegate void OnStateChange(string newState);
 
     public override void _Ready()
     {
@@ -32,13 +46,13 @@ public class PlayerTwo : KinematicBody2D
         animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
         body = GetNode<Node2D>("Body");
 
-        currentState = States.IDLE;
+        CurrentState = States.IDLE;
         velocity = Vector2.Zero;
     }
 
     public override void _PhysicsProcess(float delta)
     {
-        switch (currentState)
+        switch (CurrentState)
         {
             // Idle State
             case States.IDLE:
@@ -46,75 +60,96 @@ public class PlayerTwo : KinematicBody2D
                 {
                     if (velocity.y > 0)
                     {
-                        currentState = States.FALL;
+                        CurrentState = States.FALL;
                         return;
                     }
                 }
-                animationPlayer.Play("Idle");
+                ApplyGravity(delta);
+                Move();
+
+                // Handle Transitions:
                 if (Input.IsActionPressed("left") || Input.IsActionPressed("right"))
                 {
-                    currentState = States.WALK;
+                    CurrentState = States.RUN;
                 }
                 if (Input.IsActionJustPressed("jump"))
                 {
-                    currentState = States.JUMP;
+                    CurrentState = States.JUMP;
                 }
                 break;
 
             // Walk State
-            case States.WALK:
-                animationPlayer.Play("Run");
-                var inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
-
-                if (Input.IsActionPressed("right") && Input.IsActionPressed("left"))
+            case States.RUN:
+                if (!IsOnFloor())
                 {
-                    inputDirectionX = lookDirection;
+                    if (velocity.y > 0)
+                    {
+                        CurrentState = States.FALL;
+                        return;
+                    }
                 }
+                float inputDirectionX = HorrizontalMovement(delta);
 
-                UpdateDirection(inputDirectionX);
-                velocity.x = walkSpeed * inputDirectionX;
-                ApplyGravity(delta);
-                velocity = MoveAndSlide(velocity, Vector2.Up);
-
+                // Handle Transitions:
                 if (IsEqualApprox(inputDirectionX, 0.0f))
-                    currentState = States.IDLE;
+                {
+                    CurrentState = States.IDLE;
+                }
+                else if (Input.IsActionJustPressed("jump"))
+                {
+                    CurrentState = States.JUMP;
+                }
 
                 break;
 
             // Fall State
             case States.FALL:
-                animationPlayer.Play("Fall");
 
                 if (IsOnFloor())
                 {
-                    currentState = States.IDLE;
+                    CurrentState = States.IDLE;
                     return;
+                }
+                inputDirectionX = HorrizontalMovement(delta);
+
+                // Handle Transitions:
+                if (Input.IsActionJustPressed("jump") && (canJump || canDoubleJump))
+                {
+                    CurrentState = States.DOUBLEJUMP;
                 }
                 break;
 
 
             // Jump State
             case States.JUMP:
-                velocity.y = jumpSpeed;
-                animationPlayer.Play("Jump");
                 if (velocity.y > 0)
                 {
-                    currentState = States.FALL;
+                    CurrentState = States.FALL;
                     return;
                 }
 
-                inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
-                UpdateDirection(inputDirectionX);
-                velocity.x = walkSpeed * inputDirectionX;
-                ApplyGravity(delta);
-                velocity = MoveAndSlide(velocity, Vector2.Up);
+                inputDirectionX = HorrizontalMovement(delta);
 
+                // Handle Transitions:
+                if (Input.IsActionJustPressed("jump") && canDoubleJump)
+                {
+                    CurrentState = States.DOUBLEJUMP;
+                }
                 break;
 
             case States.DASH:
                 break;
 
             case States.DOUBLEJUMP:
+                if (velocity.y > 0)
+                {
+                    CurrentState = States.FALL;
+                    return;
+                }
+                inputDirectionX = HorrizontalMovement(delta);
+
+                // Handle Transitions:
+
                 break;
 
             case States.WALLSLIDE:
@@ -125,6 +160,75 @@ public class PlayerTwo : KinematicBody2D
 
             default:
                 break;
+        }
+    }
+
+    private float HorrizontalMovement(float delta)
+    {
+        var inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
+
+        if (Input.IsActionPressed("right") && Input.IsActionPressed("left"))
+        {
+            inputDirectionX = lookDirection;
+        }
+
+        UpdateDirection(inputDirectionX);
+        velocity.x = walkSpeed * inputDirectionX;
+        ApplyGravity(delta);
+        Move();
+        return inputDirectionX;
+    }
+
+    private void Move()
+    {
+        velocity = MoveAndSlide(velocity, Vector2.Up);
+    }
+
+    // Initialization for the State occurs when entering a state.
+    // This is meant for 
+    // setting up the flags, animation and Sounds
+    private void InitState(States nextState)
+    {
+        switch (nextState)
+        {
+            case States.IDLE:
+                canJump = true;
+                velocity.x = 0;
+                animationPlayer.Play("Idle");
+                break;
+
+            case States.RUN:
+                animationPlayer.Play("Run");
+                break;
+
+            case States.JUMP:
+                canJump = false;
+                canDoubleJump = true;
+                velocity.y = jumpSpeed;
+                animationPlayer.Play("Jump");
+                break;
+
+            case States.FALL:
+                animationPlayer.Play("Fall");
+                break;
+
+            case States.DOUBLEJUMP:
+                canDoubleJump = false;
+                canJump = false;
+                velocity.y = doubleJumpSpeed;
+                animationPlayer.Play("DoubleJump");
+                break;
+
+            case States.WALLSLIDE:
+                break;
+
+            case States.DASH:
+                break;
+
+            case States.DEATH:
+                break;
+
+            default: break;
         }
     }
 

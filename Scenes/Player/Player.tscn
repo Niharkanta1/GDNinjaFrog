@@ -432,7 +432,7 @@ nodes/MoveY/position = Vector2( 280, -140 )
 nodes/WallSlide/node = SubResource( 66 )
 nodes/WallSlide/position = Vector2( 720, -140 )
 nodes/output/position = Vector2( 1260, -160 )
-node_connections = [ "output", 0, "Hit", "WallSlide", 0, "DoubleJump", "WallSlide", 1, "Animation 5", "Hit", 0, "WallSlide", "Hit", 1, "Animation 4", "DoubleJump", 0, "MoveY", "DoubleJump", 1, "Animation 3", "MoveY", 0, "Animation", "MoveY", 1, "MoveX", "MoveY", 2, "Animation 2" ]
+node_connections = [ "output", 0, "Hit", "MoveY", 0, "Animation", "MoveY", 1, "MoveX", "MoveY", 2, "Animation 2", "Hit", 0, "WallSlide", "Hit", 1, "Animation 4", "DoubleJump", 0, "MoveY", "DoubleJump", 1, "Animation 3", "WallSlide", 0, "DoubleJump", "WallSlide", 1, "Animation 5" ]
 
 [sub_resource type="RectangleShape2D" id=63]
 extents = Vector2( 6, 1.5 )

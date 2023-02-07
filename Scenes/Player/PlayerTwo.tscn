@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scenes/Player/PlayerTwo-SpriteFrames.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://Scenes/Player/PlayerTwo.cs" type="Script" id=2]
+[ext_resource path="res://Scenes/Player/P2Label.cs" type="Script" id=3]
 
 [sub_resource type="CapsuleShape2D" id=8]
 height = 4.0
@@ -143,7 +144,7 @@ __meta__ = {
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Body"]
 frames = ExtResource( 1 )
 animation = "Idle"
-frame = 9
+frame = 3
 playing = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
@@ -170,3 +171,16 @@ shape = SubResource( 9 )
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="P2Label" type="Label" parent="."]
+margin_left = -19.0
+margin_top = -28.0
+margin_right = 21.0
+margin_bottom = -14.0
+script = ExtResource( 3 )
+debugState = true
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="CT" type="Timer" parent="Timers"]
+wait_time = 0.05

@@ -11,11 +11,15 @@ public class P2Label : Label
     public override void _Ready()
     {
         if (debugState)
+        {
             GetParent().Connect("OnStateChange", this, nameof(OnPlayerStateChange));
+        }
+
     }
 
     private void OnPlayerStateChange(string value)
     {
+        //GD.Print("State: " + value);
         this.Text = value;
     }
 }

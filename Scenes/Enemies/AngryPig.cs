@@ -26,8 +26,7 @@ public class AngryPig : Enemy
 
     private enum State { Idle, Run, Walk, Hit }
 
-    public override void _Ready()
-    {
+    public override void _Ready() {
         _gameSettings = (GameSettings)GetNode("/root/GameSettings");
         _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
         _animationTree = GetNode<AnimationTree>("AnimationTree");

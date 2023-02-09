@@ -25,11 +25,11 @@ tile_data = PoolIntArray( -65539, 17, 0, -65538, 17, 1, -65537, 17, 1, -131072, 
 
 [node name="AngryPig" parent="Enemies" instance=ExtResource( 4 )]
 position = Vector2( 348, 241 )
-waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
+_waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
 
 [node name="AnimatedSprite" parent="Enemies/AngryPig" index="0"]
 animation = "Walk"
-frame = 13
+frame = 14
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 52, 231 )

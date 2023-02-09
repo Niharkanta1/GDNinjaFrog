@@ -7,59 +7,62 @@ using Godot;
  */
 public class PlayerTwo : KinematicBody2D
 {
-    private AnimationPlayer animationPlayer;
-    private AnimatedSprite animatedSprite;
-    private Node2D body;
-    private Timer coyoteTimer, jumpBufferTimer;
-    private RayCast2D leftWallChecker1, rightWallChecker1, leftWallChecker2, rightWallChecker2,
-                    floorChecker1, floorChecker2;
+    private AnimationPlayer _animationPlayer;
+    private AnimatedSprite _animatedSprite;
+    private Node2D _body;
+    private Timer _coyoteTimer, _jumpBufferTimer;
+    private RayCast2D _leftWallChecker1, _rightWallChecker1, _leftWallChecker2, _rightWallChecker2,
+                    _floorChecker1, _floorChecker2;
 
-    [Export] private int gravity = 1000;
-    [Export] private int jumpSpeed = -350;
-    [Export] private int doubleJumpSpeed = -300;
-    [Export] private int walkSpeed = 150;
-    [Export] private int dashSpeed = 300;
-    [Export] private int numDash = 1;
+    [Export] private int _gravity = 1000;
+    [Export] private int _jumpSpeed = -350;
+    [Export] private int _doubleJumpSpeed = -300;
+    [Export] private int _walkSpeed = 150;
+    [Export] private int _dashSpeed = 300;
+    [Export] private int _numDash = 1;
 
-    private Vector2 velocity;
-    private int lookDirection = 1;
-    private bool isAttacking = false;
-    private bool isDashing = false;
-    private bool canJump = true;
-    private bool canDoubleJump = false;
+    public bool IsAttacking = false;
+    public bool IsDashing = false;
+    
+    private Vector2 _velocity;
+    private int _lookDirection = 1;
+    private bool _canJump = true;
+    private bool _canDoubleJump;
 
-    private States state;
-    public States CurrentState
+    private States _state;
+
+    private States CurrentState
     {
-        get { return state; }
+        get => _state;
         set
         {
             InitState(value);
-            state = value;
+            _state = value;
             EmitSignal(nameof(OnStateChange), value.ToString());
         }
     }
-    public enum States { IDLE, RUN, FALL, JUMP, DOUBLEJUMP, DASH, WALLSLIDE, DEATH };
+
+    private enum States { Idle, Run, Fall, Jump, DoubleJump, Dash, WallSlide, WallJump, Die };
 
     [Signal] public delegate void OnStateChange(string newState);
 
     public override void _Ready()
     {
-        animatedSprite = GetNode<AnimatedSprite>("Body/AnimatedSprite");
-        animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
-        body = GetNode<Node2D>("Body");
-        coyoteTimer = GetNode<Timer>("Timers/CoyoteeTimer");
-        jumpBufferTimer = GetNode<Timer>("Timers/JumpBufferTimer");
+        _animatedSprite = GetNode<AnimatedSprite>("Body/AnimatedSprite");
+        _animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
+        _body = GetNode<Node2D>("Body");
+        _coyoteTimer = GetNode<Timer>("Timers/CoyoteeTimer");
+        _jumpBufferTimer = GetNode<Timer>("Timers/JumpBufferTimer");
 
-        leftWallChecker1 = GetNode<RayCast2D>("WallChecker/LeftWallChecker1");
-        rightWallChecker1 = GetNode<RayCast2D>("WallChecker/RightWallChecker1");
-        leftWallChecker2 = GetNode<RayCast2D>("WallChecker/LeftWallChecker2");
-        rightWallChecker2 = GetNode<RayCast2D>("WallChecker/RightWallChecker2");
-        floorChecker1 = GetNode<RayCast2D>("WallChecker/FloorChecker1");
-        floorChecker2 = GetNode<RayCast2D>("WallChecker/FloorChecker2");
+        _leftWallChecker1 = GetNode<RayCast2D>("WallChecker/LeftWallChecker1");
+        _rightWallChecker1 = GetNode<RayCast2D>("WallChecker/RightWallChecker1");
+        _leftWallChecker2 = GetNode<RayCast2D>("WallChecker/LeftWallChecker2");
+        _rightWallChecker2 = GetNode<RayCast2D>("WallChecker/RightWallChecker2");
+        _floorChecker1 = GetNode<RayCast2D>("WallChecker/FloorChecker1");
+        _floorChecker2 = GetNode<RayCast2D>("WallChecker/FloorChecker2");
 
-        CurrentState = States.IDLE;
-        velocity = Vector2.Zero;
+        CurrentState = States.Idle;
+        _velocity = Vector2.Zero;
     }
 
     public override void _PhysicsProcess(float delta)
@@ -67,12 +70,12 @@ public class PlayerTwo : KinematicBody2D
         switch (CurrentState)
         {
             // Idle State
-            case States.IDLE:
+            case States.Idle:
                 if (!IsPlayerOnFloor())
                 {
-                    if (velocity.y > 0)
+                    if (_velocity.y > 0)
                     {
-                        CurrentState = States.FALL;
+                        CurrentState = States.Fall;
                         return;
                     }
                 }
@@ -82,164 +85,164 @@ public class PlayerTwo : KinematicBody2D
                 // Handle Transitions:
                 if (Input.IsActionPressed("left") || Input.IsActionPressed("right"))
                 {
-                    CurrentState = States.RUN;
+                    CurrentState = States.Run;
                 }
-                if (Input.IsActionJustPressed("jump") || !jumpBufferTimer.IsStopped()) // Adding a jump buffer
+                if (Input.IsActionJustPressed("jump") || !_jumpBufferTimer.IsStopped()) // Adding a jump buffer
                 {
-                    jumpBufferTimer.Stop();
-                    CurrentState = States.JUMP;
+                    _jumpBufferTimer.Stop();
+                    CurrentState = States.Jump;
                 }
                 break;
 
             // Walk State
-            case States.RUN:
+            case States.Run:
                 if (!IsPlayerOnFloor())
                 {
-                    if (velocity.y > 0)
+                    if (_velocity.y > 0)
                     {
-                        CurrentState = States.FALL;
+                        CurrentState = States.Fall;
                         return;
                     }
                 }
-                float inputDirectionX = HorrizontalMovement(delta);
+                float inputDirectionX = HorizontalMovement(delta);
 
                 // Handle Transitions:
                 if (IsEqualApprox(inputDirectionX, 0.0f))
                 {
-                    CurrentState = States.IDLE;
+                    CurrentState = States.Idle;
                 }
                 else if (Input.IsActionJustPressed("jump"))
                 {
-                    CurrentState = States.JUMP;
+                    CurrentState = States.Jump;
                 }
 
                 break;
 
             // Fall State
-            case States.FALL:
+            case States.Fall:
 
                 if (IsPlayerOnFloor())
                 {
-                    CurrentState = States.IDLE;
+                    CurrentState = States.Idle;
                     return;
                 }
-                inputDirectionX = HorrizontalMovement(delta);
+                inputDirectionX = HorizontalMovement(delta);
 
                 // Handle Transitions:
-                if (Input.IsActionJustPressed("jump") && (canJump || canDoubleJump))
+                if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump))
                 {
-                    if (!coyoteTimer.IsStopped())
+                    if (!_coyoteTimer.IsStopped())
                     {
-                        CurrentState = States.JUMP;
+                        CurrentState = States.Jump;
                     }
                     else
                     {
-                        CurrentState = States.DOUBLEJUMP;
+                        CurrentState = States.DoubleJump;
                     }
-                    coyoteTimer.Stop();
+                    _coyoteTimer.Stop();
                 }
-                else if (Input.IsActionJustPressed("jump") && !canJump) // Jump Pressed early. need to use a buffer. 
+                else if (Input.IsActionJustPressed("jump") && !_canJump) // Jump Pressed early. need to use a buffer. 
                 {
-                    if (!jumpBufferTimer.IsStopped())
-                        jumpBufferTimer.Stop();
-                    jumpBufferTimer.Start();
+                    if (!_jumpBufferTimer.IsStopped())
+                        _jumpBufferTimer.Stop();
+                    _jumpBufferTimer.Start();
                 }
                 if (IsOnWall() && !IsPlayerOnFloor() &&
                     ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
-                    CurrentState = States.WALLSLIDE;
+                    CurrentState = States.WallSlide;
                 }
                 break;
 
 
             // Jump State
-            case States.JUMP:
-                if (velocity.y > 0)
+            case States.Jump:
+                if (_velocity.y > 0)
                 {
-                    CurrentState = States.FALL;
+                    CurrentState = States.Fall;
                     return;
                 }
 
-                inputDirectionX = HorrizontalMovement(delta);
+                inputDirectionX = HorizontalMovement(delta);
 
                 // Handle Transitions:
-                if (Input.IsActionJustPressed("jump") && canDoubleJump)
+                if (Input.IsActionJustPressed("jump") && _canDoubleJump)
                 {
-                    CurrentState = States.DOUBLEJUMP;
+                    CurrentState = States.DoubleJump;
                 }
                 if (IsOnWall() && !IsPlayerOnFloor())
                 {
-                    CurrentState = States.WALLSLIDE;
+                    CurrentState = States.WallSlide;
                 }
                 break;
 
-            case States.DASH:
+            case States.Dash:
                 break;
 
-            case States.DOUBLEJUMP:
-                if (velocity.y > 0)
+            case States.DoubleJump:
+                if (_velocity.y > 0)
                 {
-                    CurrentState = States.FALL;
+                    CurrentState = States.Fall;
                     return;
                 }
-                inputDirectionX = HorrizontalMovement(delta);
+                HorizontalMovement(delta);
 
                 // Handle Transitions:
                 if (IsNextToWall() && !IsPlayerOnFloor())
                 {
-                    CurrentState = States.WALLSLIDE;
+                    CurrentState = States.WallSlide;
                 }
                 break;
 
-            case States.WALLSLIDE:
+            case States.WallSlide:
                 if (IsPlayerOnFloor())
                 {
-                    CurrentState = States.IDLE;
+                    CurrentState = States.Idle;
                     return;
                 }
                 inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
-                if ((lookDirection == 1 && inputDirectionX < 0) ||
-                        (lookDirection == -1 && inputDirectionX > 0) || !IsNextToWall())
+                if ((_lookDirection == 1 && inputDirectionX < 0) ||
+                        (_lookDirection == -1 && inputDirectionX > 0) || !IsNextToWall())
                 {
-                    CurrentState = States.FALL;
+                    CurrentState = States.Fall;
                 }
-                velocity.y += gravity * 0.2f * delta;
+                _velocity.y += _gravity * 0.2f * delta;
                 Move();
                 break;
 
-            case States.DEATH:
+            case States.Die:
                 break;
 
-            default:
+            case States.WallJump:
                 break;
         }
     }
 
-    private float HorrizontalMovement(float delta)
+    private float HorizontalMovement(float delta)
     {
         var inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
 
         if (Input.IsActionPressed("right") && Input.IsActionPressed("left"))
         {
-            inputDirectionX = lookDirection;
+            inputDirectionX = _lookDirection;
         }
 
         UpdateDirection(inputDirectionX);
-        velocity.x = walkSpeed * inputDirectionX;
+        _velocity.x = _walkSpeed * inputDirectionX;
         ApplyGravity(delta);
         Move();
         return inputDirectionX;
     }
 
-    private void Move() => velocity = MoveAndSlide(velocity, Vector2.Up);
+    private void Move() => _velocity = MoveAndSlide(_velocity, Vector2.Up);
 
     private bool IsNextToWall() => IsNextToLeftWall() || IsNextToRightWall();
 
-    private bool IsNextToRightWall() => rightWallChecker1.IsColliding() && rightWallChecker2.IsColliding();
+    private bool IsNextToRightWall() => _rightWallChecker1.IsColliding() && _rightWallChecker2.IsColliding();
 
-    private bool IsNextToLeftWall() => leftWallChecker1.IsColliding() && leftWallChecker2.IsColliding();
+    private bool IsNextToLeftWall() => _leftWallChecker1.IsColliding() && _leftWallChecker2.IsColliding();
 
-    private bool IsPlayerOnFloor() => floorChecker1.IsColliding() || floorChecker2.IsColliding();
+    private bool IsPlayerOnFloor() => _floorChecker1.IsColliding() || _floorChecker2.IsColliding();
 
     // Initialization for the State occurs when entering a state.
     // This is meant for 
@@ -248,49 +251,50 @@ public class PlayerTwo : KinematicBody2D
     {
         switch (nextState)
         {
-            case States.IDLE:
-                canJump = true;
-                velocity.x = 0;
-                animationPlayer.Play("Idle");
+            case States.Idle:
+                _canJump = true;
+                _velocity.x = 0;
+                _animationPlayer.Play("Idle");
                 break;
 
-            case States.RUN:
-                animationPlayer.Play("Run");
+            case States.Run:
+                _animationPlayer.Play("Run");
                 break;
 
-            case States.JUMP:
-                canJump = false;
-                canDoubleJump = true;
-                velocity.y = jumpSpeed;
-                animationPlayer.Play("Jump");
+            case States.Jump:
+                _canJump = false;
+                _canDoubleJump = true;
+                _velocity.y = _jumpSpeed;
+                _animationPlayer.Play("Jump");
                 break;
 
-            case States.FALL:
-                if (canJump)
-                    coyoteTimer.Start();
-                animationPlayer.Play("Fall");
+            case States.Fall:
+                if (_canJump)
+                    _coyoteTimer.Start();
+                _animationPlayer.Play("Fall");
                 break;
 
-            case States.DOUBLEJUMP:
-                canDoubleJump = false;
-                canJump = false;
-                velocity.y = doubleJumpSpeed;
-                animationPlayer.Play("DoubleJump");
+            case States.DoubleJump:
+                _canDoubleJump = false;
+                _canJump = false;
+                _velocity.y = _doubleJumpSpeed;
+                _animationPlayer.Play("DoubleJump");
                 break;
 
-            case States.WALLSLIDE:
-                canDoubleJump = true;
-                velocity = Vector2.Zero;
-                animationPlayer.Play("WallSlide");
+            case States.WallSlide:
+                _canDoubleJump = true;
+                _velocity = Vector2.Zero;
+                _animationPlayer.Play("WallSlide");
                 break;
 
-            case States.DASH:
+            case States.Dash:
                 break;
 
-            case States.DEATH:
+            case States.Die:
                 break;
 
-            default: break;
+            case States.WallJump:
+                break;
         }
     }
 
@@ -304,18 +308,18 @@ public class PlayerTwo : KinematicBody2D
 
     private void SetSpriteDirection(int lookDirection, bool flipH)
     {
-        this.lookDirection = lookDirection;
-        animatedSprite.FlipH = flipH;
+        this._lookDirection = lookDirection;
+        _animatedSprite.FlipH = flipH;
     }
 
     private void ApplyGravity(float delta)
     {
-        velocity.y += gravity * delta;
+        _velocity.y += _gravity * delta;
     }
 
-    private void OnDashFinished() => isDashing = false;
-    private void ResetDashCounter(int value) => numDash = value;
-    private bool HasDashes() => numDash > 0;
+    private void OnDashFinished() => IsDashing = false;
+    private void ResetDashCounter(int value) => _numDash = value;
+    private bool HasDashes() => _numDash > 0;
 
     // Utils
     private float Lerp(float firstFloat, float secondFloat, float by)

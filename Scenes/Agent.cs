@@ -7,21 +7,11 @@ using Godot;
  */
 public class Agent : KinematicBody2D
 {
-    [Export] private int health = 3;
-    [Export] private bool canBeHit = true;
+    [field: Export]
+    public bool CanBeHit { get; protected set; } = true;
 
-    public bool CanBeHit
-    {
-        get => canBeHit;
-        set => canBeHit = value;
-
-    }
-
-    public int Health
-    {
-        get => health;
-        set => health = value;
-    }
+    [field: Export]
+    protected int Health { get; set; } = 3;
 
     public override void _Ready()
     {

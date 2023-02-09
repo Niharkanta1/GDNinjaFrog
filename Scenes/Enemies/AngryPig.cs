@@ -8,76 +8,86 @@ using Godot;
  */
 public class AngryPig : Enemy
 {
-    [Export] private NodePath[] waypoints = new NodePath[2];
-    [Export] private float walkSpeed = 100;
-    [Export] private float runSpeed = 160;
+    [Export] private NodePath[] _waypoints = new NodePath[2];
+    [Export] private float _walkSpeed = 100;
+    [Export] private float _runSpeed = 160;
 
-    private AnimatedSprite animatedSprite;
-    private AnimationTree animationTree;
-    private Timer timer;
+    private AnimatedSprite _animatedSprite;
+    private AnimationTree _animationTree;
+    private Timer _timer;
 
-    private GameSettings gameSettings;
-    private int waypointIndex = 0;
-    private Vector2 wayPointPos;
-    private Vector2 velocity;
+    private GameSettings _gameSettings;
+    private int _waypointIndex = 0;
+    private Vector2 _wayPointPos;
+    private Vector2 _velocity;
 
-    private float waypointMinDistance = 5.0f;
-    private State currentState;
+    private const float WaypointMinDistance = 5.0f;
+    private State _currentState;
 
-    enum State { Idle, Run, Walk, Hit }
+    private enum State { Idle, Run, Walk, Hit }
 
     public override void _Ready()
     {
-        gameSettings = (GameSettings)GetNode("/root/GameSettings");
-        animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
-        animationTree = GetNode<AnimationTree>("AnimationTree");
-        timer = GetNode<Timer>("Timer");
+        _gameSettings = (GameSettings)GetNode("/root/GameSettings");
+        _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
+        _animationTree = GetNode<AnimationTree>("AnimationTree");
+        _timer = GetNode<Timer>("Timer");
 
-        wayPointPos = GetWaypointPosition(waypointIndex);
-        velocity = Vector2.Zero;
-        currentState = State.Walk;
+        _wayPointPos = GetWaypointPosition(_waypointIndex);
+        _velocity = Vector2.Zero;
+        _currentState = State.Walk;
     }
 
     public override void _PhysicsProcess(float delta)
     {
-        Vector2 direction = Position.DirectionTo(wayPointPos);
-        float distance = new Vector2(Position.x, 0).DistanceTo(new Vector2(wayPointPos.x, 0));
+        var direction = Position.DirectionTo(_wayPointPos);
+        var distance = new Vector2(Position.x, 0).DistanceTo(new Vector2(_wayPointPos.x, 0));
         float moveSpeed = 0;
-        switch (currentState)
+        switch (_currentState)
         {
             case State.Walk:
-                moveSpeed = walkSpeed;
+                moveSpeed = _walkSpeed;
                 break;
             case State.Run:
-                moveSpeed = runSpeed;
+                moveSpeed = _runSpeed;
                 break;
+            case State.Idle:
+                break;
+            case State.Hit:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
-        if (distance >= waypointMinDistance)
+        if (distance >= WaypointMinDistance)
         {
-            velocity.x = Math.Sign(direction.x) * moveSpeed;
-            velocity.y = Math.Min(velocity.y + gameSettings.gravity, gameSettings.terminalVelocity);
+            _velocity.x = Math.Sign(direction.x) * moveSpeed;
+            _velocity.y = Math.Min(_velocity.y + _gameSettings.Gravity, _gameSettings.TerminalVelocity);
 
-            if (Math.Sign(direction.x) == 1)
-                animatedSprite.FlipH = true;
-            else if ((Math.Sign(direction.x) == -1))
-                animatedSprite.FlipH = false;
+            switch (Math.Sign(direction.x)) {
+                case 1:
+                    _animatedSprite.FlipH = true;
+                    break;
+                case -1:
+                    _animatedSprite.FlipH = false;
+                    break;
+            }
 
-            velocity = MoveAndSlide(velocity, Vector2.Up);
+            _velocity = MoveAndSlide(_velocity, Vector2.Up);
         }
         else
         {
-            if (waypointIndex < waypoints.Length - 1)
-                waypointIndex++;
+            if (_waypointIndex < _waypoints.Length - 1)
+                _waypointIndex++;
             else
-                waypointIndex = 0;
+                _waypointIndex = 0;
         }
-        wayPointPos = GetWaypointPosition(waypointIndex);
+        _wayPointPos = GetWaypointPosition(_waypointIndex);
     }
 
     private Vector2 GetWaypointPosition(int index)
     {
-        return GetNode<Position2D>(waypoints[index]).Position;
+        return GetNode<Position2D>(_waypoints[index]).Position;
     }
 
     public override void GetHit(int damage)
@@ -89,38 +99,38 @@ public class AngryPig : Enemy
             QueueFree();
         }
         CanBeHit = false;
-        currentState = State.Hit;
-        animationTree.Set("parameters/Hit/active", true);
-        animationTree.Set("parameters/HitVariation/blend_amount", gameSettings.randomGen.RandiRange(0, 1));
-        timer.WaitTime = 0.5f;
-        timer.Start();
+        _currentState = State.Hit;
+        _animationTree.Set("parameters/Hit/active", true);
+        _animationTree.Set("parameters/HitVariation/blend_amount", _gameSettings.RandomGen.RandiRange(0, 1));
+        _timer.WaitTime = 0.5f;
+        _timer.Start();
     }
 
     // Signals
 
-    public void OnDetectionZoneBodyShapeEntered(RID bodyRID, Node body, int bodyShapeIndex, int localShapeIndex)
+    public void OnDetectionZoneBodyShapeEntered(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)
     {
-        animationTree.Active = false;
-        animationTree.Active = true;
-        animationTree.Set("parameters/PlayerDetected/blend_position", 1);
-        if (currentState == State.Walk)
-            currentState = State.Run;
+        _animationTree.Active = false;
+        _animationTree.Active = true;
+        _animationTree.Set("parameters/PlayerDetected/blend_position", 1);
+        if (_currentState == State.Walk)
+            _currentState = State.Run;
     }
 
-    public void OnDetectionZoneBodyShapeExited(RID bodyRID, Node body, int bodyShapeIndex, int localShapeIndex)
+    public void OnDetectionZoneBodyShapeExited(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)
     {
-        animationTree.Active = false;
-        animationTree.Active = true;
-        animationTree.Set("parameters/PlayerDetected/blend_position", 0);
-        if (currentState == State.Run)
-            currentState = State.Walk;
+        _animationTree.Active = false;
+        _animationTree.Active = true;
+        _animationTree.Set("parameters/PlayerDetected/blend_position", 0);
+        if (_currentState == State.Run)
+            _currentState = State.Walk;
     }
 
     public void OnTimerTimeout()
     {
         CanBeHit = true;
-        currentState = State.Run;
-        timer.Stop();
+        _currentState = State.Run;
+        _timer.Stop();
     }
 
 }

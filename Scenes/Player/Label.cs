@@ -7,11 +7,11 @@ using Godot;
  */
 public class Label : Godot.Label
 {
-    [Export] private bool debugState = false;
+    [Export] private bool _debugState = false;
 
     public override void _Ready()
     {
-        if (debugState)
+        if (_debugState)
             GetParent().Connect("OnStateChange", this, nameof(OnPlayerStateChange));
     }
 

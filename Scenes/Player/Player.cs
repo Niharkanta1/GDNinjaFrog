@@ -7,29 +7,29 @@ using System;
  */
 public class Player : Agent
 {
-    [Export] private float moveSpeed = 200;
-    [Export] private float jumpImpulse = 600;
-    [Export] private float enemyBounceImpulse = 400;
-    [Export] private float knockbackSpeed = 50;
-    [Export] private float iFrameTime = 1.0f;
-    [Export] private int jumpDamage = 1;
+    [Export] private float _moveSpeed = 200;
+    [Export] private float _jumpImpulse = 600;
+    [Export] private float _enemyBounceImpulse = 400;
+    [Export] private float _knockbackSpeed = 50;
+    [Export] private float _iFrameTime = 1.0f;
+    [Export] private int _jumpDamage = 1;
 
     [Signal] public delegate void OnStateChange(string newState);
 
-    private AnimationTree animationTree;
-    private AnimatedSprite animatedSprite;
-    private Area2D jumpHitbox;
-    private Timer timer;
+    private AnimationTree _animationTree;
+    private AnimatedSprite _animatedSprite;
+    private Area2D _jumpHitbox;
+    private Timer _timer;
 
-    private GameSettings gameSettings;
-    private Vector2 input, velocity;
-    private State currentState;
+    private GameSettings _gameSettings;
+    private Vector2 _input, _velocity;
+    private State _currentState;
 
-    private bool canJump = true;
-    private bool canDoubleJump = false;
-    private Color originalColor;
+    private bool _canJump = true;
+    private bool _canDoubleJump = false;
+    private Color _originalColor;
 
-    enum State
+    private enum State
     {
         Idle,
         Run,
@@ -44,26 +44,26 @@ public class Player : Agent
 
     public override void _Ready()
     {
-        gameSettings = (GameSettings)GetNode("/root/GameSettings");
-        currentState = State.Idle;
+        _gameSettings = (GameSettings)GetNode("/root/GameSettings");
+        _currentState = State.Idle;
 
-        animationTree = GetNode<AnimationTree>("AnimationTree");
-        animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
-        jumpHitbox = GetNode<Area2D>("JumpHitbox");
-        timer = GetNode<Timer>("Timer");
-        originalColor = animatedSprite.Modulate;
+        _animationTree = GetNode<AnimationTree>("AnimationTree");
+        _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
+        _jumpHitbox = GetNode<Area2D>("JumpHitbox");
+        _timer = GetNode<Timer>("Timer");
+        _originalColor = _animatedSprite.Modulate;
     }
 
     public override void _PhysicsProcess(float delta)
     {
         var input = GetPlayerInput();
 
-        if (currentState != State.Hit)
+        if (_currentState != State.Hit)
             UpdatePlayerMovement(input);
         else
             PlayerKnockback(input);
 
-        velocity = MoveAndSlide(velocity, Vector2.Up);
+        _velocity = MoveAndSlide(_velocity, Vector2.Up);
         SetAnimParameters();
         CheckNextState();
     }
@@ -72,47 +72,50 @@ public class Player : Agent
     {
         AdjustSpriteFlipDirection(input);
 
-        velocity.x = input.x * moveSpeed;
-        velocity.y = Math.Min(velocity.y + gameSettings.gravity, gameSettings.terminalVelocity);
+        _velocity.x = input.x * _moveSpeed;
+        _velocity.y = Math.Min(_velocity.y + _gameSettings.Gravity, _gameSettings.TerminalVelocity);
     }
 
     private void PlayerKnockback(Vector2 input)
     {
         CanBeHit = false;
-        var knockbackDir = animatedSprite.FlipH ? 1 : -1;
-        velocity.x = knockbackDir * knockbackSpeed;
-        velocity.y = 0;
+        var knockbackDir = _animatedSprite.FlipH ? 1 : -1;
+        _velocity.x = knockbackDir * _knockbackSpeed;
+        _velocity.y = 0;
     }
 
     #endregion
 
-    private void AdjustSpriteFlipDirection(Vector2 input)
-    {
-        if (Math.Sign(input.x) == 1)
-            animatedSprite.FlipH = false;
-        else if (Math.Sign(input.x) == -1)
-            animatedSprite.FlipH = true;
+    private void AdjustSpriteFlipDirection(Vector2 input) {
+        switch (Math.Sign(input.x)) {
+            case 1:
+                _animatedSprite.FlipH = false;
+                break;
+            case -1:
+                _animatedSprite.FlipH = true;
+                break;
+        }
     }
 
     private void SetAnimParameters()
     {
-        animationTree.Set("parameters/MoveX/blend_position", Math.Sign(velocity.x));
-        animationTree.Set("parameters/MoveY/blend_amount", Math.Sign(velocity.y));
+        _animationTree.Set("parameters/MoveX/blend_position", Math.Sign(_velocity.x));
+        _animationTree.Set("parameters/MoveY/blend_amount", Math.Sign(_velocity.y));
     }
 
     private void CheckNextState()
     {
         if (IsOnFloor()) // On the floor.
         {
-            canJump = true;
-            canDoubleJump = false;
-            if (Input.IsActionJustPressed("jump") && canJump)
+            _canJump = true;
+            _canDoubleJump = false;
+            if (Input.IsActionJustPressed("jump") && _canJump)
             {
                 EnterState(State.Jump);
-                canJump = false;
-                canDoubleJump = true;
+                _canJump = false;
+                _canDoubleJump = true;
             }
-            else if (Math.Abs(velocity.x) > 0)
+            else if (Math.Abs(_velocity.x) > 0)
             {
                 EnterState(State.Run);
             }
@@ -123,18 +126,18 @@ public class Player : Agent
         }
         else // On Air
         {
-            if (Input.IsActionJustPressed("jump") && (canJump || canDoubleJump))
+            if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump))
             {
                 EnterState(State.DoubleJump);
             }
         }
     }
 
-    public Vector2 GetPlayerInput()
+    private Vector2 GetPlayerInput()
     {
-        input.x = Input.GetActionStrength("right") - Input.GetActionRawStrength("left");
-        input.y = Input.GetActionStrength("down") - Input.GetActionStrength("up");
-        return input;
+        _input.x = Input.GetActionStrength("right") - Input.GetActionRawStrength("left");
+        _input.y = Input.GetActionStrength("down") - Input.GetActionStrength("up");
+        return _input;
     }
 
     private void EnterState(State newState)
@@ -142,22 +145,32 @@ public class Player : Agent
         switch (newState)
         {
             case State.Jump:
-                canJump = false;
-                velocity.y = -jumpImpulse; // Perform Jump
+                _canJump = false;
+                _velocity.y = -_jumpImpulse; // Perform Jump
                 break;
 
             case State.DoubleJump:
-                canJump = false;
-                canDoubleJump = false;
-                velocity.y = -jumpImpulse; // Perform Jump
-                animationTree.Set("parameters/DoubleJump/active", true);
+                _canJump = false;
+                _canDoubleJump = false;
+                _velocity.y = -_jumpImpulse; // Perform Jump
+                _animationTree.Set("parameters/DoubleJump/active", true);
                 break;
 
             case State.Hit:
-                animationTree.Set("parameters/Hit/active", true);
+                _animationTree.Set("parameters/Hit/active", true);
                 break;
+            case State.Idle:
+                break;
+            case State.Run:
+                break;
+            case State.Fall:
+                break;
+            case State.WallSlide:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
-        currentState = newState;
+        _currentState = newState;
         EmitSignal(nameof(OnStateChange), newState.ToString());
     }
 
@@ -175,9 +188,9 @@ public class Player : Agent
         }
         else
         {
-            timer.WaitTime = iFrameTime;
-            timer.Start();
-            animatedSprite.Modulate = new Color(1, 1, 1, 0.3f);
+            _timer.WaitTime = _iFrameTime;
+            _timer.Start();
+            _animatedSprite.Modulate = new Color(1, 1, 1, 0.3f);
             EnterState(State.Hit);
         }
     }
@@ -192,25 +205,20 @@ public class Player : Agent
     // Signals
     #region  SIGNALS 
 
-    public void OnJumpHitboxAreaShapeEntered(RID areaRID, Area2D area, int areaShapeIndex, int localShapeIndex)
-    {
-        if (area.Owner is Enemy)
-        {
-            Enemy enemy = area.GetOwner<Enemy>();
-            if (!enemy.CanBeHit)
-                return;
-            if (jumpHitbox.GlobalPosition.y < area.GlobalPosition.y)
-            {
-                velocity.y = -enemyBounceImpulse;
-                enemy.GetHit(jumpDamage);
-            }
-        }
+    public void OnJumpHitboxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex) {
+        if (!(area.Owner is Enemy)) return;
+        var enemy = area.GetOwner<Enemy>();
+        if (!enemy.CanBeHit)
+            return;
+        if (!(_jumpHitbox.GlobalPosition.y < area.GlobalPosition.y)) return;
+        _velocity.y = -_enemyBounceImpulse;
+        enemy.GetHit(_jumpDamage);
     }
 
     public void OnTimerTimeout()
     {
-        timer.Stop();
-        animatedSprite.Modulate = originalColor;
+        _timer.Stop();
+        _animatedSprite.Modulate = _originalColor;
         CanBeHit = true;
     }
 

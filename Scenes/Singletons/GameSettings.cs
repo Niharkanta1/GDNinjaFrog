@@ -6,18 +6,18 @@ using Godot;
  */
 public class GameSettings : Node
 {
-    [Export] public float gravity = 50;
-    [Export] public float terminalVelocity = 300;
-    [Export] public bool shouldRandomize = true;
+    [Export] public float Gravity = 50;
+    [Export] public float TerminalVelocity = 300;
+    [Export] public bool ShouldRandomize = true;
 
-    public RandomNumberGenerator randomGen;
+    public RandomNumberGenerator RandomGen;
 
     public override void _Ready()
     {
-        randomGen = new RandomNumberGenerator();
-        if (shouldRandomize)
+        RandomGen = new RandomNumberGenerator();
+        if (ShouldRandomize)
         {
-            randomGen.Randomize();
+            RandomGen.Randomize();
         }
     }
 }

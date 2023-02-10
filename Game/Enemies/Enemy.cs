@@ -7,7 +7,7 @@ using Godot;
  */
 public class Enemy : Agent
 {
-    [Export] private int collisionDamage = 1;
+    [Export] private int _collisionDamage = 1;
     public override void _Ready()
     {
 
@@ -19,11 +19,11 @@ public class Enemy : Agent
         throw new NotImplementedException();
     }
 
-    public void OnEnemyCollisionHitboxBodyShapeEntered(RID bodyRID, Node body, int bodyShapeIndex, int localShapeIndex)
+    public void OnEnemyCollisionHitBoxBodyShapeEntered(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)
     {
-        if (body is Player)
+        if (body is Player player)
         {
-            ((Player)body).GetHit(collisionDamage);
+            player.GetHit(_collisionDamage);
         }
     }
 }

@@ -9,23 +9,26 @@ public class PlayerTwo : KinematicBody2D
 {
     private AnimationPlayer _animationPlayer;
     private AnimatedSprite _animatedSprite;
-    private Node2D _body;
-    private Timer _coyoteTimer, _jumpBufferTimer;
+    private Timer _coyoteTimer, _jumpBufferTimer, _wallJumpTimer;
     private RayCast2D _leftWallChecker1, _rightWallChecker1, _leftWallChecker2, _rightWallChecker2,
                     _floorChecker1, _floorChecker2;
+    private Area2D _stompHitBox;
 
     [Export] private int _gravity = 1000;
+    [Export] private float _fallGravityMultiplier = 1.5f;
     [Export] private int _jumpSpeed = -350;
+    [Export] private int _wallJumpSpeed = -350;
+    [Export] private int _wallJumpMoveSpeed = 150;
     [Export] private int _doubleJumpSpeed = -300;
     [Export] private int _walkSpeed = 150;
     [Export] private int _dashSpeed = 300;
     [Export] private int _numDash = 1;
+    [Export] private int _stompBounceSpeed = -300;
+    [Export] private int _stompDamage = 1;
 
-    public bool IsAttacking = false;
-    public bool IsDashing = false;
-    
     private Vector2 _velocity;
     private int _lookDirection = 1;
+    private int _wallJumpDirection = 1;
     private bool _canJump = true;
     private bool _canDoubleJump;
 
@@ -50,9 +53,10 @@ public class PlayerTwo : KinematicBody2D
     {
         _animatedSprite = GetNode<AnimatedSprite>("Body/AnimatedSprite");
         _animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
-        _body = GetNode<Node2D>("Body");
-        _coyoteTimer = GetNode<Timer>("Timers/CoyoteeTimer");
+        _coyoteTimer = GetNode<Timer>("Timers/CoyoteTimer");
         _jumpBufferTimer = GetNode<Timer>("Timers/JumpBufferTimer");
+        _wallJumpTimer = GetNode<Timer>("Timers/WallJumpTimer");
+        _stompHitBox = GetNode<Area2D>("StompHitBox");
 
         _leftWallChecker1 = GetNode<RayCast2D>("WallChecker/LeftWallChecker1");
         _rightWallChecker1 = GetNode<RayCast2D>("WallChecker/RightWallChecker1");
@@ -104,7 +108,7 @@ public class PlayerTwo : KinematicBody2D
                         return;
                     }
                 }
-                float inputDirectionX = HorizontalMovement(delta);
+                var inputDirectionX = HorizontalMovement(delta, _walkSpeed);
 
                 // Handle Transitions:
                 if (IsEqualApprox(inputDirectionX, 0.0f))
@@ -126,19 +130,12 @@ public class PlayerTwo : KinematicBody2D
                     CurrentState = States.Idle;
                     return;
                 }
-                inputDirectionX = HorizontalMovement(delta);
+                inputDirectionX = HorizontalMovement(delta, _walkSpeed, _fallGravityMultiplier); 
 
                 // Handle Transitions:
                 if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump))
                 {
-                    if (!_coyoteTimer.IsStopped())
-                    {
-                        CurrentState = States.Jump;
-                    }
-                    else
-                    {
-                        CurrentState = States.DoubleJump;
-                    }
+                    CurrentState = !_coyoteTimer.IsStopped() ? States.Jump : States.DoubleJump;
                     _coyoteTimer.Stop();
                 }
                 else if (Input.IsActionJustPressed("jump") && !_canJump) // Jump Pressed early. need to use a buffer. 
@@ -147,7 +144,7 @@ public class PlayerTwo : KinematicBody2D
                         _jumpBufferTimer.Stop();
                     _jumpBufferTimer.Start();
                 }
-                if (IsOnWall() && !IsPlayerOnFloor() &&
+                if (IsNextToWall() && !IsPlayerOnFloor() &&
                     ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
@@ -163,14 +160,15 @@ public class PlayerTwo : KinematicBody2D
                     return;
                 }
 
-                inputDirectionX = HorizontalMovement(delta);
+                inputDirectionX = HorizontalMovement(delta, _walkSpeed);
 
                 // Handle Transitions:
                 if (Input.IsActionJustPressed("jump") && _canDoubleJump)
                 {
                     CurrentState = States.DoubleJump;
                 }
-                if (IsOnWall() && !IsPlayerOnFloor())
+                if (IsNextToWall() && !IsPlayerOnFloor() &&
+                    ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
                 }
@@ -185,10 +183,11 @@ public class PlayerTwo : KinematicBody2D
                     CurrentState = States.Fall;
                     return;
                 }
-                HorizontalMovement(delta);
+                inputDirectionX = HorizontalMovement(delta, _walkSpeed);
 
                 // Handle Transitions:
-                if (IsNextToWall() && !IsPlayerOnFloor())
+                if (IsNextToWall() && !IsPlayerOnFloor() &&
+                    ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
                 }
@@ -207,41 +206,84 @@ public class PlayerTwo : KinematicBody2D
                     CurrentState = States.Fall;
                 }
                 _velocity.y += _gravity * 0.2f * delta;
+                _velocity.x = 0;
                 Move();
+                
+                // Handle Transitions
+                if (Input.IsActionJustPressed("jump"))
+                {
+                    switch (_animatedSprite.FlipH)
+                    {
+                        case true when IsNextToLeftWall():
+                            _wallJumpDirection = 1;
+                            break;
+                        case false when IsNextToRightWall():
+                            _wallJumpDirection = -1;
+                            break;
+                    }
+                    CurrentState = States.WallJump;
+                    _wallJumpTimer.Start();
+                }
                 break;
 
             case States.Die:
                 break;
 
             case States.WallJump:
+                if (_velocity.y > 0)
+                {
+                    CurrentState = States.Fall;
+                    return;
+                }
+                _velocity.x = _wallJumpDirection * _wallJumpMoveSpeed;
+
+                inputDirectionX = FindInputDirection();
+                ApplyGravity(delta);
+                Move();
+                
+                // Handle Transitions:
+                if (Input.IsActionJustPressed("jump") && _canDoubleJump)
+                {
+                    CurrentState = States.DoubleJump;
+                }
+                if (IsNextToWall() && !IsPlayerOnFloor() && _wallJumpTimer.IsStopped() &&
+                    ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
+                {
+                    CurrentState = States.WallSlide;
+                }
                 break;
+            
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
-    private float HorizontalMovement(float delta)
+    private float HorizontalMovement(float delta, float moveSpeed, float gravityMultiplier = 1)
+    {
+        var inputDirectionX = FindInputDirection();
+        UpdateDirection(inputDirectionX);
+        _velocity.x =  moveSpeed * inputDirectionX;
+        ApplyGravity(delta, gravityMultiplier);
+        Move();
+        return inputDirectionX;
+    }
+    
+    private float FindInputDirection()
     {
         var inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
-
         if (Input.IsActionPressed("right") && Input.IsActionPressed("left"))
         {
             inputDirectionX = _lookDirection;
         }
-
-        UpdateDirection(inputDirectionX);
-        _velocity.x = _walkSpeed * inputDirectionX;
-        ApplyGravity(delta);
-        Move();
         return inputDirectionX;
     }
 
     private void Move() => _velocity = MoveAndSlide(_velocity, Vector2.Up);
-
+    private void ApplyGravity(float delta, float gravityMultiplier = 1) => _velocity.y += _gravity * gravityMultiplier * delta;
+    
     private bool IsNextToWall() => IsNextToLeftWall() || IsNextToRightWall();
-
     private bool IsNextToRightWall() => _rightWallChecker1.IsColliding() && _rightWallChecker2.IsColliding();
-
     private bool IsNextToLeftWall() => _leftWallChecker1.IsColliding() && _leftWallChecker2.IsColliding();
-
     private bool IsPlayerOnFloor() => _floorChecker1.IsColliding() || _floorChecker2.IsColliding();
 
     // Initialization for the State occurs when entering a state.
@@ -280,6 +322,16 @@ public class PlayerTwo : KinematicBody2D
                 _velocity.y = _doubleJumpSpeed;
                 _animationPlayer.Play("DoubleJump");
                 break;
+            
+            case States.WallJump:
+                _canJump = false;
+                _canDoubleJump = true;
+                _velocity.y = _wallJumpSpeed;
+                _velocity.x = 0;
+                _lookDirection = _wallJumpDirection;
+                _animatedSprite.FlipH = (_wallJumpDirection != 1);
+                _animationPlayer.Play("Jump");
+                break;
 
             case States.WallSlide:
                 _canDoubleJump = true;
@@ -293,8 +345,8 @@ public class PlayerTwo : KinematicBody2D
             case States.Die:
                 break;
 
-            case States.WallJump:
-                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(nextState), nextState, null);
         }
     }
 
@@ -308,19 +360,26 @@ public class PlayerTwo : KinematicBody2D
 
     private void SetSpriteDirection(int lookDirection, bool flipH)
     {
-        this._lookDirection = lookDirection;
-        _animatedSprite.FlipH = flipH;
+        _lookDirection = lookDirection;
+        _animatedSprite.FlipH = flipH; 
     }
 
-    private void ApplyGravity(float delta)
-    {
-        _velocity.y += _gravity * delta;
-    }
 
-    private void OnDashFinished() => IsDashing = false;
     private void ResetDashCounter(int value) => _numDash = value;
     private bool HasDashes() => _numDash > 0;
 
+    // Signals
+    
+    public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex) {
+        if (!(area.Owner is Enemy)) return;
+        var enemy = area.GetOwner<Enemy>();
+        if (!enemy.CanBeHit)
+            return;
+        if (!(_stompHitBox.GlobalPosition.y < area.GlobalPosition.y)) return;
+        _velocity.y = _stompBounceSpeed;
+        enemy.GetHit(_stompDamage);
+    }
+    
     // Utils
     private float Lerp(float firstFloat, float secondFloat, float by)
     {

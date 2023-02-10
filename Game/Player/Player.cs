@@ -10,7 +10,7 @@ public class Player : Agent
     [Export] private float _moveSpeed = 200;
     [Export] private float _jumpImpulse = 600;
     [Export] private float _enemyBounceImpulse = 400;
-    [Export] private float _knockbackSpeed = 50;
+    [Export] private float _knockBackSpeed = 50;
     [Export] private float _iFrameTime = 1.0f;
     [Export] private int _jumpDamage = 1;
 
@@ -18,7 +18,7 @@ public class Player : Agent
 
     private AnimationTree _animationTree;
     private AnimatedSprite _animatedSprite;
-    private Area2D _jumpHitbox;
+    private Area2D _jumpHitBox;
     private Timer _timer;
 
     private GameSettings _gameSettings;
@@ -49,7 +49,7 @@ public class Player : Agent
 
         _animationTree = GetNode<AnimationTree>("AnimationTree");
         _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
-        _jumpHitbox = GetNode<Area2D>("JumpHitbox");
+        _jumpHitBox = GetNode<Area2D>("JumpHitBox");
         _timer = GetNode<Timer>("Timer");
         _originalColor = _animatedSprite.Modulate;
     }
@@ -61,7 +61,7 @@ public class Player : Agent
         if (_currentState != State.Hit)
             UpdatePlayerMovement(input);
         else
-            PlayerKnockback(input);
+            PlayerKnockBack(input);
 
         _velocity = MoveAndSlide(_velocity, Vector2.Up);
         SetAnimParameters();
@@ -76,11 +76,11 @@ public class Player : Agent
         _velocity.y = Math.Min(_velocity.y + _gameSettings.Gravity, _gameSettings.TerminalVelocity);
     }
 
-    private void PlayerKnockback(Vector2 input)
+    private void PlayerKnockBack(Vector2 input)
     {
         CanBeHit = false;
-        var knockbackDir = _animatedSprite.FlipH ? 1 : -1;
-        _velocity.x = knockbackDir * _knockbackSpeed;
+        var knockBackDir = _animatedSprite.FlipH ? 1 : -1;
+        _velocity.x = knockBackDir * _knockBackSpeed;
         _velocity.y = 0;
     }
 
@@ -205,12 +205,12 @@ public class Player : Agent
     // Signals
     #region  SIGNALS 
 
-    public void OnJumpHitboxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex) {
+    public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex) {
         if (!(area.Owner is Enemy)) return;
         var enemy = area.GetOwner<Enemy>();
         if (!enemy.CanBeHit)
             return;
-        if (!(_jumpHitbox.GlobalPosition.y < area.GlobalPosition.y)) return;
+        if (!(_jumpHitBox.GlobalPosition.y < area.GlobalPosition.y)) return;
         _velocity.y = -_enemyBounceImpulse;
         enemy.GetHit(_jumpDamage);
     }

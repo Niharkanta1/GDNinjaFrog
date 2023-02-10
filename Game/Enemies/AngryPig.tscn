@@ -5,7 +5,7 @@
 [ext_resource path="res://Art/Textures/Enemies/AngryPig/Hit 1 (36x30).png" type="Texture" id=3]
 [ext_resource path="res://Art/Textures/Enemies/AngryPig/Walk (36x30).png" type="Texture" id=4]
 [ext_resource path="res://Art/Textures/Enemies/AngryPig/Hit 2 (36x30).png" type="Texture" id=5]
-[ext_resource path="res://Scenes/Enemies/AngryPig.cs" type="Script" id=6]
+[ext_resource path="res://Game/Enemies/AngryPig.cs" type="Script" id=6]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 3 )
@@ -346,7 +346,7 @@ nodes/HitVariation/position = Vector2( 120, 320 )
 nodes/PlayerDetected/node = SubResource( 61 )
 nodes/PlayerDetected/position = Vector2( 120, 120 )
 nodes/output/position = Vector2( 620, 120 )
-node_connections = [ "HitVariation", 0, "Animation", "HitVariation", 1, "Animation 2", "output", 0, "Hit", "Hit", 0, "PlayerDetected", "Hit", 1, "HitVariation" ]
+node_connections = [ "HitVariation", 0, "Animation", "HitVariation", 1, "Animation 2", "Hit", 0, "PlayerDetected", "Hit", 1, "HitVariation", "output", 0, "Hit" ]
 
 [sub_resource type="RectangleShape2D" id=51]
 extents = Vector2( 89.5, 18 )
@@ -361,12 +361,11 @@ extents = Vector2( 12, 11 )
 collision_layer = 2
 collision_mask = 4
 script = ExtResource( 6 )
-waypoints = [ NodePath(""), NodePath("") ]
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 43 )
-animation = "Hit1"
-frame = 4
+animation = "Walk"
+frame = 14
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -434,4 +433,4 @@ shape = SubResource( 67 )
 [connection signal="body_shape_entered" from="DetectionZone" to="." method="OnDetectionZoneBodyShapeEntered"]
 [connection signal="body_shape_exited" from="DetectionZone" to="." method="OnDetectionZoneBodyShapeExited"]
 [connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]
-[connection signal="body_shape_entered" from="EnemyCollisionHitbox" to="." method="OnEnemyCollisionHitboxBodyShapeEntered"]
+[connection signal="body_shape_entered" from="EnemyCollisionHitbox" to="." method="OnEnemyCollisionHitBoxBodyShapeEntered"]

@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 /*
@@ -16,7 +15,6 @@ public class Enemy : Agent
     public override void GetHit(int damage)
     {
         GD.Print("Enemy GetHit Called. Override This Method");
-        throw new NotImplementedException();
     }
 
     public void OnEnemyCollisionHitBoxBodyShapeEntered(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)

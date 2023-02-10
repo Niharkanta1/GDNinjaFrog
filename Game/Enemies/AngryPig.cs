@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Godot;
 
 /*
@@ -17,7 +16,7 @@ public class AngryPig : Enemy
     private Timer _timer;
 
     private GameSettings _gameSettings;
-    private int _waypointIndex = 0;
+    private int _waypointIndex;
     private Vector2 _wayPointPos;
     private Vector2 _velocity;
 

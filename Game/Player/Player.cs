@@ -26,7 +26,7 @@ public class Player : Agent
     private State _currentState;
 
     private bool _canJump = true;
-    private bool _canDoubleJump = false;
+    private bool _canDoubleJump;
     private Color _originalColor;
 
     private enum State

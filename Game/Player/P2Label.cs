@@ -6,7 +6,7 @@ using Godot;
  */
 public class P2Label : Label
 {
-    [Export] private bool _debugState = false;
+    [Export] private bool _debugState;
 
     public override void _Ready()
     {

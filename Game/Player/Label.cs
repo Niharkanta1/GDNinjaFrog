@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 /*
@@ -7,7 +6,7 @@ using Godot;
  */
 public class Label : Godot.Label
 {
-    [Export] private bool _debugState = false;
+    [Export] private bool _debugState;
 
     public override void _Ready()
     {

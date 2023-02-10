@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 /*
@@ -21,12 +20,11 @@ public class Agent : KinematicBody2D
     public virtual void GetHit(int damage)
     {
         GD.Print("Agent GetHit Called. Override This Method");
-        throw new NotImplementedException();
     }
 
     public virtual void OnHitFinished()
     {
-        throw new NotImplementedException();
+        
     }
 
 }

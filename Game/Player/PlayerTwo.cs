@@ -200,16 +200,18 @@ public class PlayerTwo : KinematicBody2D
                     return;
                 }
                 inputDirectionX = Input.GetActionStrength("right") - Input.GetActionStrength("left");
-                if ((_lookDirection == 1 && inputDirectionX < 0) ||
-                        (_lookDirection == -1 && inputDirectionX > 0) || !IsNextToWall())
-                {
-                    CurrentState = States.Fall;
-                }
+                
                 _velocity.y += _gravity * 0.2f * delta;
                 _velocity.x = 0;
                 Move();
                 
                 // Handle Transitions
+                if ((_lookDirection == 1 && inputDirectionX < 0) || 
+                    (_lookDirection == -1 && inputDirectionX > 0) || 
+                    !IsNextToWall() || Input.IsActionPressed("down"))
+                {
+                    CurrentState = States.Fall;
+                }
                 if (Input.IsActionJustPressed("jump"))
                 {
                     switch (_animatedSprite.FlipH)

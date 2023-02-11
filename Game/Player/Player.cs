@@ -86,8 +86,10 @@ public class Player : Agent
 
     #endregion
 
-    private void AdjustSpriteFlipDirection(Vector2 input) {
-        switch (Math.Sign(input.x)) {
+    private void AdjustSpriteFlipDirection(Vector2 input)
+    {
+        switch (Math.Sign(input.x))
+        {
             case 1:
                 _animatedSprite.FlipH = false;
                 break;
@@ -205,7 +207,8 @@ public class Player : Agent
     // Signals
     #region  SIGNALS 
 
-    public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex) {
+    public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex)
+    {
         if (!(area.Owner is Enemy)) return;
         var enemy = area.GetOwner<Enemy>();
         if (!enemy.CanBeHit)

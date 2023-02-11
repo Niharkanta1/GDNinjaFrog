@@ -25,7 +25,8 @@ public class AngryPig : Enemy
 
     private enum State { Idle, Run, Walk, Hit }
 
-    public override void _Ready() {
+    public override void _Ready()
+    {
         _gameSettings = (GameSettings)GetNode("/root/GameSettings");
         _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
         _animationTree = GetNode<AnimationTree>("AnimationTree");
@@ -62,7 +63,8 @@ public class AngryPig : Enemy
             _velocity.x = Math.Sign(direction.x) * moveSpeed;
             _velocity.y = Math.Min(_velocity.y + _gameSettings.Gravity, _gameSettings.TerminalVelocity);
 
-            switch (Math.Sign(direction.x)) {
+            switch (Math.Sign(direction.x))
+            {
                 case 1:
                     _animatedSprite.FlipH = true;
                     break;
@@ -88,7 +90,7 @@ public class AngryPig : Enemy
         return GetNode<Position2D>(_waypoints[index]).Position;
     }
 
-    public override void GetHit(int damage)
+    public override void GetHit(int damage, int direction = 1)
     {
         Health -= damage;
         if (Health <= 0)

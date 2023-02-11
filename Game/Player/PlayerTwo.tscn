@@ -40,7 +40,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id=3]
 resource_name = "Hit"
-length = 0.35
+length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("AnimatedSprite:animation")
 tracks/0/interp = 1
@@ -52,6 +52,20 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ "Hit" ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.5 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "OnHitAnimationFinished"
+} ]
 }
 
 [sub_resource type="Animation" id=4]
@@ -135,6 +149,10 @@ extents = Vector2( 5, 1 )
 [node name="PlayerTwo" type="KinematicBody2D"]
 collision_mask = 4
 script = ExtResource( 1 )
+<Health>k__BackingField = 99
+_gravity = 1200.0
+_walkSpeed = 200.0
+_knockBackSpeed = 150.0
 
 [node name="Body" type="Node2D" parent="."]
 __meta__ = {
@@ -144,7 +162,6 @@ __meta__ = {
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Body"]
 frames = ExtResource( 3 )
 animation = "Idle"
-frame = 5
 playing = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
@@ -160,7 +177,9 @@ anims/WallSlide = SubResource( 7 )
 [node name="WallCheck" type="Node2D" parent="."]
 
 [node name="HitboxArea" type="Area2D" parent="."]
+collision_layer = 128
 collision_mask = 0
+monitoring = false
 __meta__ = {
 "_edit_lock_": true
 }
@@ -195,6 +214,13 @@ wait_time = 0.1
 one_shot = true
 
 [node name="WallJumpTimer" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
+[node name="HitTimer" type="Timer" parent="Timers"]
+one_shot = true
+
+[node name="KnockBackTimer" type="Timer" parent="Timers"]
 wait_time = 0.1
 one_shot = true
 
@@ -248,4 +274,5 @@ collision_mask = 16
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompHitBox"]
 shape = SubResource( 10 )
 
+[connection signal="timeout" from="Timers/HitTimer" to="." method="OnTimerTimeout"]
 [connection signal="area_shape_entered" from="StompHitBox" to="." method="OnJumpHitBoxAreaShapeEntered"]

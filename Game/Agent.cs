@@ -17,14 +17,14 @@ public class Agent : KinematicBody2D
 
     }
 
-    public virtual void GetHit(int damage)
+    public virtual void GetHit(int damage, int direction = 1)
     {
         GD.Print("Agent GetHit Called. Override This Method");
     }
 
     public virtual void OnHitFinished()
     {
-        
+
     }
 
 }

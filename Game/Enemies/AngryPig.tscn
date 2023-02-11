@@ -346,13 +346,13 @@ nodes/HitVariation/position = Vector2( 120, 320 )
 nodes/PlayerDetected/node = SubResource( 61 )
 nodes/PlayerDetected/position = Vector2( 120, 120 )
 nodes/output/position = Vector2( 620, 120 )
-node_connections = [ "HitVariation", 0, "Animation", "HitVariation", 1, "Animation 2", "Hit", 0, "PlayerDetected", "Hit", 1, "HitVariation", "output", 0, "Hit" ]
+node_connections = [ "Hit", 0, "PlayerDetected", "Hit", 1, "HitVariation", "HitVariation", 0, "Animation", "HitVariation", 1, "Animation 2", "output", 0, "Hit" ]
 
 [sub_resource type="RectangleShape2D" id=51]
 extents = Vector2( 89.5, 18 )
 
 [sub_resource type="RectangleShape2D" id=62]
-extents = Vector2( 10.5, 5 )
+extents = Vector2( 12, 3.5 )
 
 [sub_resource type="RectangleShape2D" id=67]
 extents = Vector2( 12, 11 )
@@ -365,7 +365,7 @@ script = ExtResource( 6 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 43 )
 animation = "Walk"
-frame = 14
+frame = 13
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -414,7 +414,7 @@ __meta__ = {
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="JumpHitbox"]
-position = Vector2( 0.5, 0 )
+position = Vector2( 0, -1.5 )
 shape = SubResource( 62 )
 __meta__ = {
 "_edit_lock_": true
@@ -424,6 +424,7 @@ __meta__ = {
 
 [node name="EnemyCollisionHitbox" type="Area2D" parent="."]
 collision_layer = 0
+collision_mask = 128
 monitorable = false
 
 [node name="EnemyCollisionShape" type="CollisionShape2D" parent="EnemyCollisionHitbox"]
@@ -433,4 +434,5 @@ shape = SubResource( 67 )
 [connection signal="body_shape_entered" from="DetectionZone" to="." method="OnDetectionZoneBodyShapeEntered"]
 [connection signal="body_shape_exited" from="DetectionZone" to="." method="OnDetectionZoneBodyShapeExited"]
 [connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]
+[connection signal="area_shape_entered" from="EnemyCollisionHitbox" to="." method="OnEnemyCollisionHitBoxAreaShapeEntered"]
 [connection signal="body_shape_entered" from="EnemyCollisionHitbox" to="." method="OnEnemyCollisionHitBoxBodyShapeEntered"]

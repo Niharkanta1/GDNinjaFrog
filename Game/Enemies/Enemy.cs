@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 /*
@@ -12,16 +13,31 @@ public class Enemy : Agent
 
     }
 
-    public override void GetHit(int damage)
+    public override void GetHit(int damage, int direction = 1)
     {
         GD.Print("Enemy GetHit Called. Override This Method");
     }
 
     public void OnEnemyCollisionHitBoxBodyShapeEntered(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)
     {
-        if (body is Player player)
+        switch (body)
         {
-            player.GetHit(_collisionDamage);
+            case Player player:
+                player.GetHit(_collisionDamage);
+                break;
+            case PlayerTwo playerTwo:
+                playerTwo.GetHit(_collisionDamage, Math.Sign(playerTwo.Position.x - Position.x));
+                break;
+        }
+
+    }
+
+    public void OnEnemyCollisionHitBoxAreaShapeEntered(RID areaRid, Area2D area, int bodyShapeIndex,
+        int localShapeIndex)
+    {
+        if (area.Owner is PlayerTwo playerTwo)
+        {
+            playerTwo.GetHit(_collisionDamage, Math.Sign(playerTwo.Position.x - Position.x));
         }
     }
 }

@@ -18,7 +18,7 @@ public class Player : Agent
 
     private AnimationTree _animationTree;
     private AnimatedSprite _animatedSprite;
-    private Area2D _jumpHitBox;
+    private Area2D _stompHitBox;
     private Timer _timer;
 
     private GameSettings _gameSettings;
@@ -49,7 +49,7 @@ public class Player : Agent
 
         _animationTree = GetNode<AnimationTree>("AnimationTree");
         _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
-        _jumpHitBox = GetNode<Area2D>("JumpHitBox");
+        _stompHitBox = GetNode<Area2D>("StompHitBox");
         _timer = GetNode<Timer>("Timer");
         _originalColor = _animatedSprite.Modulate;
     }
@@ -179,7 +179,7 @@ public class Player : Agent
     // Hit and Collisions
     #region HIT_COLLISIONS
 
-    public override void GetHit(int damage)
+    public override void GetHit(int damage, int direction = 1)
     {
         if (!CanBeHit) return;
         GD.Print(" Health: " + Health);
@@ -207,13 +207,13 @@ public class Player : Agent
     // Signals
     #region  SIGNALS 
 
-    public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex)
+    public void OnStompHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex)
     {
         if (!(area.Owner is Enemy)) return;
         var enemy = area.GetOwner<Enemy>();
         if (!enemy.CanBeHit)
             return;
-        if (!(_jumpHitBox.GlobalPosition.y < area.GlobalPosition.y)) return;
+        if (!(_stompHitBox.GlobalPosition.y < area.GlobalPosition.y)) return;
         _velocity.y = -_enemyBounceImpulse;
         enemy.GetHit(_jumpDamage);
     }

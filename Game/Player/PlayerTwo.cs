@@ -12,6 +12,7 @@ public class PlayerTwo : Agent
     private Timer _coyoteTimer, _jumpBufferTimer, _wallJumpTimer, _hitTimer, _knockBackTimer;
     private RayCast2D _leftWallChecker1, _rightWallChecker1, _leftWallChecker2, _rightWallChecker2,
         _floorChecker1, _floorChecker2;
+    private Particles2D _deathParticle, _dashParticleL, _dashParticleR;
     private Area2D _stompHitBox;
 
     [Export] private float _gravity = 1000;
@@ -66,6 +67,10 @@ public class PlayerTwo : Agent
         _wallJumpTimer = GetNode<Timer>("Timers/WallJumpTimer");
         _hitTimer = GetNode<Timer>("Timers/HitTimer");
         _knockBackTimer = GetNode<Timer>("Timers/KnockBackTimer");
+
+        _deathParticle = GetNode<Particles2D>("Particles/DeathParticle");
+        _dashParticleR = GetNode<Particles2D>("Particles/DashParticleR");
+        _dashParticleL = GetNode<Particles2D>("Particles/DashParticleL");
 
         _stompHitBox = GetNode<Area2D>("StompHitBox");
 
@@ -203,6 +208,8 @@ public class PlayerTwo : Agent
                 break;
 
             case States.Dash:
+                _dashParticleL.Position = Position;
+                _dashParticleR.Position = Position;
                 _velocity.y = 0;
                 _velocity.x = _dashSpeed * _lookDirection;
                 if (!_isDashing)
@@ -408,6 +415,7 @@ public class PlayerTwo : Agent
                 break;
 
             case States.Dash:
+                StartDashParticle();
                 _animationPlayer.Play("Dash");
                 _canDash = false;
                 _isDashing = true;
@@ -415,6 +423,9 @@ public class PlayerTwo : Agent
                 break;
 
             case States.Die:
+                _animationPlayer.Play("Death");
+                _velocity.y = _jumpSpeed * 0.5f;
+                Move();
                 break;
 
             case States.Hit:
@@ -425,6 +436,20 @@ public class PlayerTwo : Agent
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(nextState), nextState, null);
+        }
+    }
+    private void StartDashParticle()
+    {
+        switch (_lookDirection)
+        {
+            case 1:
+                _dashParticleR.Position = Position;
+                _dashParticleR.Emitting = true;
+                break;
+            case -1:
+                _dashParticleL.Position = Position;
+                _dashParticleL.Emitting = true;
+                break;
         }
     }
 
@@ -451,7 +476,7 @@ public class PlayerTwo : Agent
         Health -= damage;
         if (Health <= 0)
         {
-            GD.Print("Player Died");
+            CurrentState = States.Die;
         }
         else
         {
@@ -489,5 +514,19 @@ public class PlayerTwo : Agent
         _canDash = true;
         _isDashing = false;
         CanBeHit = true;
+        if(_dashParticleR.Emitting)
+            _dashParticleR.Emitting = false;
+        if(_dashParticleL.Emitting)
+            _dashParticleL.Emitting = false;
+    }
+
+    public void OnPlayerDeath()
+    {
+        GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
+        GetNode<Node2D>("Body").Visible = false;
+        GetNode<Area2D>("HitboxArea").Monitorable = false;
+        _deathParticle.Position = Position;
+        _deathParticle.Scale = new Vector2(_lookDirection, 1);
+        _deathParticle.Emitting = true;
     }
 }

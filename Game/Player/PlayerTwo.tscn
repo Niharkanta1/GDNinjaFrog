@@ -1,8 +1,11 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://Game/Player/PlayerTwo.cs" type="Script" id=1]
 [ext_resource path="res://Game/Player/P2Label.cs" type="Script" id=2]
 [ext_resource path="res://Game/Player/PlayerTwo-SpriteFrames.tres" type="SpriteFrames" id=3]
+[ext_resource path="res://Art/Textures/Player/Virtual Guy/Death2 (32x32).png" type="Texture" id=4]
+[ext_resource path="res://Art/Textures/Player/Virtual Guy/Dash (32x32)).png" type="Texture" id=5]
+[ext_resource path="res://Art/Textures/Player/Virtual Guy/Dash2 (32x32)).png" type="Texture" id=6]
 
 [sub_resource type="Animation" id=11]
 resource_name = "Dash"
@@ -16,7 +19,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "Dash" ]
 }
 tracks/1/type = "method"
@@ -34,6 +37,36 @@ tracks/1/keys = {
 } ]
 }
 
+[sub_resource type="Animation" id=14]
+resource_name = "Death"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Death" ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.2 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "OnPlayerDeath"
+} ]
+}
+
 [sub_resource type="Animation" id=1]
 resource_name = "DoubleJump"
 length = 0.3
@@ -47,7 +80,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "DoubleJump" ]
 }
 
@@ -64,7 +97,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "Fall" ]
 }
 
@@ -80,7 +113,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "Hit" ]
 }
 tracks/1/type = "method"
@@ -111,7 +144,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "Idle" ]
 }
 
@@ -128,7 +161,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "Jump" ]
 }
 
@@ -145,7 +178,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "Run" ]
 }
 
@@ -162,7 +195,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
+"update": 0,
 "values": [ "WallSlide" ]
 }
 
@@ -176,10 +209,41 @@ height = 10.0
 [sub_resource type="RectangleShape2D" id=10]
 extents = Vector2( 5, 1 )
 
+[sub_resource type="Curve" id=17]
+min_value = -360.0
+max_value = 360.0
+_data = [ Vector2( 0, 188.182 ), 0.0, 0.0, 0, 0, Vector2( 0.997319, 90 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=18]
+curve = SubResource( 17 )
+
+[sub_resource type="ParticlesMaterial" id=12]
+flag_disable_z = true
+gravity = Vector3( 0, 98, 0 )
+initial_velocity = 30.0
+angular_velocity = 20.0
+angular_velocity_random = 1.0
+angular_velocity_curve = SubResource( 18 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+
+[sub_resource type="Gradient" id=15]
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=16]
+gradient = SubResource( 15 )
+
+[sub_resource type="ParticlesMaterial" id=13]
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+gravity = Vector3( 0, 0, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+color_ramp = SubResource( 16 )
+
 [node name="PlayerTwo" type="KinematicBody2D"]
 collision_mask = 4
 script = ExtResource( 1 )
-<Health>k__BackingField = 99
 _gravity = 1200.0
 _walkSpeed = 200.0
 _knockBackSpeed = 150.0
@@ -190,13 +254,16 @@ __meta__ = {
 }
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Body"]
+z_index = 1
 frames = ExtResource( 3 )
-animation = "Dash"
+animation = "Idle"
+frame = 1
 playing = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
 reset_on_save = false
 anims/Dash = SubResource( 11 )
+anims/Death = SubResource( 14 )
 anims/DoubleJump = SubResource( 1 )
 anims/Fall = SubResource( 2 )
 anims/Hit = SubResource( 3 )
@@ -304,6 +371,33 @@ collision_mask = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompHitBox"]
 shape = SubResource( 10 )
+
+[node name="Particles" type="Node" parent="."]
+
+[node name="DeathParticle" type="Particles2D" parent="Particles"]
+emitting = false
+amount = 1
+lifetime = 3.0
+one_shot = true
+speed_scale = 1.5
+process_material = SubResource( 12 )
+texture = ExtResource( 4 )
+
+[node name="DashParticleR" type="Particles2D" parent="Particles"]
+emitting = false
+amount = 10
+lifetime = 0.4
+local_coords = false
+process_material = SubResource( 13 )
+texture = ExtResource( 5 )
+
+[node name="DashParticleL" type="Particles2D" parent="Particles"]
+emitting = false
+amount = 10
+lifetime = 0.4
+local_coords = false
+process_material = SubResource( 13 )
+texture = ExtResource( 6 )
 
 [connection signal="timeout" from="Timers/HitTimer" to="." method="OnTimerTimeout"]
 [connection signal="area_shape_entered" from="StompHitBox" to="." method="OnJumpHitBoxAreaShapeEntered"]

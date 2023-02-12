@@ -1,8 +1,38 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Game/Player/PlayerTwo.cs" type="Script" id=1]
 [ext_resource path="res://Game/Player/P2Label.cs" type="Script" id=2]
 [ext_resource path="res://Game/Player/PlayerTwo-SpriteFrames.tres" type="SpriteFrames" id=3]
+
+[sub_resource type="Animation" id=11]
+resource_name = "Dash"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "Dash" ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.3 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "OnDashAnimationFinished"
+} ]
+}
 
 [sub_resource type="Animation" id=1]
 resource_name = "DoubleJump"
@@ -161,11 +191,12 @@ __meta__ = {
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Body"]
 frames = ExtResource( 3 )
-animation = "Idle"
+animation = "Dash"
 playing = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
 reset_on_save = false
+anims/Dash = SubResource( 11 )
 anims/DoubleJump = SubResource( 1 )
 anims/Fall = SubResource( 2 )
 anims/Hit = SubResource( 3 )

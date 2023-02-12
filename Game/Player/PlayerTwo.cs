@@ -11,7 +11,7 @@ public class PlayerTwo : Agent
     private AnimatedSprite _animatedSprite;
     private Timer _coyoteTimer, _jumpBufferTimer, _wallJumpTimer, _hitTimer, _knockBackTimer;
     private RayCast2D _leftWallChecker1, _rightWallChecker1, _leftWallChecker2, _rightWallChecker2,
-                    _floorChecker1, _floorChecker2;
+        _floorChecker1, _floorChecker2;
     private Area2D _stompHitBox;
 
     [Export] private float _gravity = 1000;
@@ -35,6 +35,8 @@ public class PlayerTwo : Agent
     private int _knockBackDirection = 1;
     private bool _canJump = true;
     private bool _canDoubleJump;
+    private bool _canDash = true;
+    private bool _isDashing;
     private bool _isKnockedBack;
     private bool _hitAnimationFinished = true;
 
@@ -64,7 +66,7 @@ public class PlayerTwo : Agent
         _wallJumpTimer = GetNode<Timer>("Timers/WallJumpTimer");
         _hitTimer = GetNode<Timer>("Timers/HitTimer");
         _knockBackTimer = GetNode<Timer>("Timers/KnockBackTimer");
-            
+
         _stompHitBox = GetNode<Area2D>("StompHitBox");
 
         _leftWallChecker1 = GetNode<RayCast2D>("WallChecker/LeftWallChecker1");
@@ -73,7 +75,7 @@ public class PlayerTwo : Agent
         _rightWallChecker2 = GetNode<RayCast2D>("WallChecker/RightWallChecker2");
         _floorChecker1 = GetNode<RayCast2D>("WallChecker/FloorChecker1");
         _floorChecker2 = GetNode<RayCast2D>("WallChecker/FloorChecker2");
-        
+
         CurrentState = States.Idle;
         _velocity = Vector2.Zero;
         _originalColor = _animatedSprite.Modulate;
@@ -101,10 +103,14 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = States.Run;
                 }
-                if (Input.IsActionJustPressed("jump") || !_jumpBufferTimer.IsStopped()) // Adding a jump buffer
+                else if (Input.IsActionJustPressed("jump") || !_jumpBufferTimer.IsStopped()) // Adding a jump buffer
                 {
                     _jumpBufferTimer.Stop();
                     CurrentState = States.Jump;
+                }
+                else if (Input.IsActionJustPressed("dash") && _canDash)
+                {
+                    CurrentState = States.Dash;
                 }
                 break;
 
@@ -121,13 +127,17 @@ public class PlayerTwo : Agent
                 var inputDirectionX = HorizontalMovement(delta, _walkSpeed);
 
                 // Handle Transitions:
-                if (IsEqualApprox(inputDirectionX, 0.0f))
+                if (Utils.IsEqualApprox(inputDirectionX, 0.0f))
                 {
                     CurrentState = States.Idle;
                 }
                 else if (Input.IsActionJustPressed("jump"))
                 {
                     CurrentState = States.Jump;
+                }
+                else if (Input.IsActionJustPressed("dash") && _canDash)
+                {
+                    CurrentState = States.Dash;
                 }
 
                 break;
@@ -154,10 +164,14 @@ public class PlayerTwo : Agent
                         _jumpBufferTimer.Stop();
                     _jumpBufferTimer.Start();
                 }
-                if (IsNextToWall() && !IsPlayerOnFloor() &&
-                    ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
+                else if (IsNextToWall() && !IsPlayerOnFloor() &&
+                         ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
+                }
+                else if (Input.IsActionJustPressed("dash") && _canDash)
+                {
+                    CurrentState = States.Dash;
                 }
                 break;
 
@@ -177,14 +191,33 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = States.DoubleJump;
                 }
-                if (IsNextToWall() && !IsPlayerOnFloor() &&
-                    ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
+                else if (IsNextToWall() && !IsPlayerOnFloor() &&
+                         ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
+                }
+                else if (Input.IsActionJustPressed("dash") && _canDash)
+                {
+                    CurrentState = States.Dash;
                 }
                 break;
 
             case States.Dash:
+                _velocity.y = 0;
+                _velocity.x = _dashSpeed * _lookDirection;
+                if (!_isDashing)
+                {
+                    CurrentState = IsPlayerOnFloor() ? States.Idle : States.Fall;
+                }
+                Move();
+
+                // Handle Transitions:
+                if (IsNextToWall() && !IsPlayerOnFloor() &&
+                    ((_lookDirection > 0 && IsNextToRightWall()) || (_lookDirection < 0 && IsNextToLeftWall())))
+                {
+                    ResetDashState();
+                    CurrentState = States.WallSlide;
+                }
                 break;
 
             case States.DoubleJump:
@@ -200,6 +233,10 @@ public class PlayerTwo : Agent
                     ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
+                }
+                else if (Input.IsActionJustPressed("dash") && _canDash)
+                {
+                    CurrentState = States.Dash;
                 }
                 break;
 
@@ -258,15 +295,18 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = States.DoubleJump;
                 }
-                if (IsNextToWall() && !IsPlayerOnFloor() && _wallJumpTimer.IsStopped() &&
-                    ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
+                else if (IsNextToWall() && !IsPlayerOnFloor() && _wallJumpTimer.IsStopped() &&
+                         ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
+                }
+                else if (Input.IsActionJustPressed("dash") && _canDash)
+                {
+                    CurrentState = States.Dash;
                 }
                 break;
 
             case States.Hit:
-                GD.Print("Hit State:" + _isKnockedBack + " " + _knockBackTimer.IsStopped());
                 if (!_isKnockedBack && _hitAnimationFinished)
                     CurrentState = States.Idle;
                 if (_knockBackTimer.IsStopped())
@@ -279,7 +319,7 @@ public class PlayerTwo : Agent
                     _velocity.x = _knockBackDirection * _knockBackSpeed;
                 Move();
                 break;
-            
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -306,7 +346,8 @@ public class PlayerTwo : Agent
     }
 
     private void Move() => _velocity = MoveAndSlide(_velocity, Vector2.Up);
-    private void ApplyGravity(float delta, float gravityMultiplier = 1) => _velocity.y += _gravity * gravityMultiplier * delta;
+    private void ApplyGravity(float delta, float gravityMultiplier = 1) =>
+        _velocity.y += _gravity * gravityMultiplier * delta;
 
     private bool IsNextToWall() => IsNextToLeftWall() || IsNextToRightWall();
     private bool IsNextToRightWall() => _rightWallChecker1.IsColliding() && _rightWallChecker2.IsColliding();
@@ -367,6 +408,10 @@ public class PlayerTwo : Agent
                 break;
 
             case States.Dash:
+                _animationPlayer.Play("Dash");
+                _canDash = false;
+                _isDashing = true;
+                CanBeHit = false;
                 break;
 
             case States.Die:
@@ -396,10 +441,6 @@ public class PlayerTwo : Agent
         _lookDirection = lookDirection;
         _animatedSprite.FlipH = flipH;
     }
-
-
-    private void ResetDashCounter(int value) => _numDash = value;
-    private bool HasDashes() => _numDash > 0;
 
     // Inherited Method Overrides
     public override void GetHit(int damage, int direction = 1)
@@ -433,7 +474,7 @@ public class PlayerTwo : Agent
         _velocity.y = _stompBounceSpeed;
         enemy.GetHit(_stompDamage);
     }
-    
+
     public void OnTimerTimeout()
     {
         _hitTimer.Stop();
@@ -442,20 +483,11 @@ public class PlayerTwo : Agent
     }
 
     public void OnHitAnimationFinished() => _hitAnimationFinished = true;
-
-    // Utils
-    private float Lerp(float firstFloat, float secondFloat, float by)
+    public void OnDashAnimationFinished() => ResetDashState();
+    private void ResetDashState()
     {
-        return firstFloat * (1 - by) + secondFloat * by;
-    }
-
-    private static bool IsEqualApprox(float a, float b)
-    {
-        return IsEqualApprox(a, b, 0.00001);
-    }
-
-    private static bool IsEqualApprox(double left, double right, double delta)
-    {
-        return Math.Abs(left - right) < delta;
+        _canDash = true;
+        _isDashing = false;
+        CanBeHit = true;
     }
 }

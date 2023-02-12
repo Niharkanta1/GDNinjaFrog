@@ -23,5 +23,10 @@ script_templates/
 Backup/
 UpgradeLog.htm
 
-# Export Binaries
+# VS Code
+.vscode
+
+# Rider 
+.idea/
+
 /Exports

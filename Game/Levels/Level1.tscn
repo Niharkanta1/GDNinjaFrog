@@ -28,9 +28,10 @@ position = Vector2( 348, 241 )
 _waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
 
 [node name="AnimatedSprite" parent="Enemies/AngryPig" index="0"]
-frame = 14
+frame = 12
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 67, 227 )
 current = true
 smoothing_enabled = true
 smoothing_speed = 10.0
@@ -44,6 +45,7 @@ position = Vector2( 253, 238 )
 position = Vector2( 453, 239 )
 
 [node name="PlayerTwo" parent="." instance=ExtResource( 5 )]
+position = Vector2( 67, 227 )
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="PlayerTwo"]
 remote_path = NodePath("../../Camera2D")

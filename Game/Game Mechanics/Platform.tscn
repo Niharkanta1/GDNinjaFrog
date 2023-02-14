@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Game/Levels/Terrain.tres" type="TileSet" id=1]
+[ext_resource path="res://Game/Game Mechanics/PlatformMoving.cs" type="Script" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 47.5, 8 )
+
+[node name="Platform" type="KinematicBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 8 )
+shape = SubResource( 1 )
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+collision_layer = 4
+collision_mask = 3
+format = 1
+tile_data = PoolIntArray( 65533, 7, 0, 65534, 7, 1, 65535, 7, 1, 0, 7, 1, 1, 7, 1, 2, 7, 2 )
+
+[node name="MoveTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="WaitTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="timeout" from="MoveTimer" to="." method="OnMovementTimerTimeout"]
+[connection signal="timeout" from="WaitTimer" to="." method="OnWaitTimerTimeout"]

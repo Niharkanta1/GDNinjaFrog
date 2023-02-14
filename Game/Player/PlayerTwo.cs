@@ -15,19 +15,19 @@ public class PlayerTwo : Agent
     private Particles2D _deathParticle, _dashParticleL, _dashParticleR;
     private Area2D _stompHitBox;
 
-    [Export] private float _gravity = 1000;
+    [Export] private float _gravity = 1200;
     [Export] private float _fallGravityMultiplier = 1.5f;
     [Export] private float _jumpSpeed = -350;
     [Export] private float _wallJumpSpeed = -350;
     [Export] private float _wallJumpMoveSpeed = 150;
     [Export] private float _doubleJumpSpeed = -300;
-    [Export] private float _walkSpeed = 150;
+    [Export] private float _walkSpeed = 200;
     [Export] private float _dashSpeed = 300;
     [Export] private int _numDash = 1;
     [Export] private float _stompBounceSpeed = -300;
     [Export] private int _stompDamage = 1;
     [Export] private float _iFrameTime = 1;
-    [Export] private float _knockBackSpeed = 50f;
+    [Export] private float _knockBackSpeed = 150f;
 
     private Color _originalColor;
     private Vector2 _velocity;
@@ -41,6 +41,7 @@ public class PlayerTwo : Agent
     private bool _isKnockedBack;
     private bool _hitAnimationFinished = true;
 
+    private Vector2 snapVector = Vector2.Down * 16;
     private States _state;
 
     private States CurrentState
@@ -101,7 +102,7 @@ public class PlayerTwo : Agent
                     }
                 }
                 ApplyGravity(delta);
-                Move();
+                Move(snapVector);
 
                 // Handle Transitions:
                 if (Input.IsActionPressed("left") || Input.IsActionPressed("right"))
@@ -129,7 +130,7 @@ public class PlayerTwo : Agent
                         return;
                     }
                 }
-                var inputDirectionX = HorizontalMovement(delta, _walkSpeed);
+                var inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, snapVector);
 
                 // Handle Transitions:
                 if (Utils.IsEqualApprox(inputDirectionX, 0.0f))
@@ -163,12 +164,17 @@ public class PlayerTwo : Agent
                     CurrentState = !_coyoteTimer.IsStopped() ? States.Jump : States.DoubleJump;
                     _coyoteTimer.Stop();
                 }
+                else if (!_jumpBufferTimer.IsStopped() && (_canDoubleJump || _canJump))
+                {
+                    _jumpBufferTimer.Stop();
+                    CurrentState = States.DoubleJump;
+                }
                 else if (Input.IsActionJustPressed("jump") && !_canJump) // Jump Pressed early. need to use a buffer. 
                 {
                     if (!_jumpBufferTimer.IsStopped())
                         _jumpBufferTimer.Stop();
                     _jumpBufferTimer.Start();
-                }
+                } 
                 else if (IsNextToWall() && !IsPlayerOnFloor() &&
                          ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
@@ -216,7 +222,7 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = IsPlayerOnFloor() ? States.Idle : States.Fall;
                 }
-                Move();
+                Move(snapVector);
 
                 // Handle Transitions:
                 if (IsNextToWall() && !IsPlayerOnFloor() &&
@@ -224,6 +230,12 @@ public class PlayerTwo : Agent
                 {
                     ResetDashState();
                     CurrentState = States.WallSlide;
+                } 
+                else if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump)) // Jump Pressed early. need to use a buffer. 
+                {
+                    if (!_jumpBufferTimer.IsStopped())
+                        _jumpBufferTimer.Stop();
+                    _jumpBufferTimer.Start();
                 }
                 break;
 
@@ -341,6 +353,15 @@ public class PlayerTwo : Agent
         Move();
         return inputDirectionX;
     }
+    private float HorizontalMovementWithSnap(float delta, float moveSpeed, Vector2 snap, float gravityMultiplier = 1)
+    {
+        var inputDirectionX = FindInputDirection();
+        UpdateDirection(inputDirectionX);
+        _velocity.x = moveSpeed * inputDirectionX;
+        ApplyGravity(delta, gravityMultiplier);
+        Move(snap);
+        return inputDirectionX;
+    }
 
     private float FindInputDirection()
     {
@@ -353,6 +374,7 @@ public class PlayerTwo : Agent
     }
 
     private void Move() => _velocity = MoveAndSlide(_velocity, Vector2.Up);
+    private void Move(Vector2 snap) => _velocity = MoveAndSlideWithSnap(_velocity, snap, Vector2.Up, infiniteInertia: false);
     private void ApplyGravity(float delta, float gravityMultiplier = 1) =>
         _velocity.y += _gravity * gravityMultiplier * delta;
 
@@ -369,6 +391,7 @@ public class PlayerTwo : Agent
         switch (nextState)
         {
             case States.Idle:
+                _canDash = true;
                 _canJump = true;
                 _velocity.x = 0;
                 _animationPlayer.Play("Idle");
@@ -511,7 +534,6 @@ public class PlayerTwo : Agent
     public void OnDashAnimationFinished() => ResetDashState();
     private void ResetDashState()
     {
-        _canDash = true;
         _isDashing = false;
         CanBeHit = true;
         if(_dashParticleR.Emitting)

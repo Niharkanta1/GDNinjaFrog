@@ -41,7 +41,7 @@ public class PlayerTwo : Agent
     private bool _isKnockedBack;
     private bool _hitAnimationFinished = true;
 
-    private Vector2 snapVector = Vector2.Down * 16;
+    private Vector2 _snapVector = Vector2.Down * 16;
     private States _state;
 
     private States CurrentState
@@ -93,7 +93,7 @@ public class PlayerTwo : Agent
         {
             // Idle State
             case States.Idle:
-                if (!IsPlayerOnFloor())
+                if (!IsOnFloor())
                 {
                     if (_velocity.y > 0)
                     {
@@ -102,7 +102,7 @@ public class PlayerTwo : Agent
                     }
                 }
                 ApplyGravity(delta);
-                Move(snapVector);
+                Move(_snapVector);
 
                 // Handle Transitions:
                 if (Input.IsActionPressed("left") || Input.IsActionPressed("right"))
@@ -122,7 +122,7 @@ public class PlayerTwo : Agent
 
             // Walk State
             case States.Run:
-                if (!IsPlayerOnFloor())
+                if (!IsOnFloor())
                 {
                     if (_velocity.y > 0)
                     {
@@ -130,7 +130,7 @@ public class PlayerTwo : Agent
                         return;
                     }
                 }
-                var inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, snapVector);
+                var inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, _snapVector);
 
                 // Handle Transitions:
                 if (Utils.IsEqualApprox(inputDirectionX, 0.0f))
@@ -151,12 +151,12 @@ public class PlayerTwo : Agent
             // Fall State
             case States.Fall:
 
-                if (IsPlayerOnFloor())
+                if (IsOnFloor())
                 {
                     CurrentState = States.Idle;
                     return;
                 }
-                inputDirectionX = HorizontalMovement(delta, _walkSpeed, _fallGravityMultiplier);
+                inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, _snapVector, _fallGravityMultiplier);
 
                 // Handle Transitions:
                 if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump))
@@ -174,8 +174,8 @@ public class PlayerTwo : Agent
                     if (!_jumpBufferTimer.IsStopped())
                         _jumpBufferTimer.Stop();
                     _jumpBufferTimer.Start();
-                } 
-                else if (IsNextToWall() && !IsPlayerOnFloor() &&
+                }
+                else if (IsNextToWall() && !IsOnFloor() &&
                          ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
@@ -202,7 +202,7 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = States.DoubleJump;
                 }
-                else if (IsNextToWall() && !IsPlayerOnFloor() &&
+                else if (IsNextToWall() && !IsOnFloor() &&
                          ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
@@ -220,17 +220,17 @@ public class PlayerTwo : Agent
                 _velocity.x = _dashSpeed * _lookDirection;
                 if (!_isDashing)
                 {
-                    CurrentState = IsPlayerOnFloor() ? States.Idle : States.Fall;
+                    CurrentState = IsOnFloor() ? States.Idle : States.Fall;
                 }
-                Move(snapVector);
+                Move(_snapVector);
 
                 // Handle Transitions:
-                if (IsNextToWall() && !IsPlayerOnFloor() &&
+                if (IsNextToWall() && !IsOnFloor() &&
                     ((_lookDirection > 0 && IsNextToRightWall()) || (_lookDirection < 0 && IsNextToLeftWall())))
                 {
                     ResetDashState();
                     CurrentState = States.WallSlide;
-                } 
+                }
                 else if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump)) // Jump Pressed early. need to use a buffer. 
                 {
                     if (!_jumpBufferTimer.IsStopped())
@@ -248,7 +248,7 @@ public class PlayerTwo : Agent
                 inputDirectionX = HorizontalMovement(delta, _walkSpeed);
 
                 // Handle Transitions:
-                if (IsNextToWall() && !IsPlayerOnFloor() &&
+                if (IsNextToWall() && !IsOnFloor() &&
                     ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
@@ -260,7 +260,7 @@ public class PlayerTwo : Agent
                 break;
 
             case States.WallSlide:
-                if (IsPlayerOnFloor())
+                if (IsOnFloor())
                 {
                     CurrentState = States.Idle;
                     return;
@@ -314,7 +314,7 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = States.DoubleJump;
                 }
-                else if (IsNextToWall() && !IsPlayerOnFloor() && _wallJumpTimer.IsStopped() &&
+                else if (IsNextToWall() && !IsOnFloor() && _wallJumpTimer.IsStopped() &&
                          ((inputDirectionX > 0 && IsNextToRightWall()) || (inputDirectionX < 0 && IsNextToLeftWall())))
                 {
                     CurrentState = States.WallSlide;
@@ -381,7 +381,7 @@ public class PlayerTwo : Agent
     private bool IsNextToWall() => IsNextToLeftWall() || IsNextToRightWall();
     private bool IsNextToRightWall() => _rightWallChecker1.IsColliding() && _rightWallChecker2.IsColliding();
     private bool IsNextToLeftWall() => _leftWallChecker1.IsColliding() && _leftWallChecker2.IsColliding();
-    private bool IsPlayerOnFloor() => _floorChecker1.IsColliding() || _floorChecker2.IsColliding();
+    //private bool IsOnFloor() => _floorChecker1.IsColliding() || _floorChecker2.IsColliding();
 
     // Initialization for the State occurs when entering a state.
     // This is meant for 
@@ -536,9 +536,9 @@ public class PlayerTwo : Agent
     {
         _isDashing = false;
         CanBeHit = true;
-        if(_dashParticleR.Emitting)
+        if (_dashParticleR.Emitting)
             _dashParticleR.Emitting = false;
-        if(_dashParticleL.Emitting)
+        if (_dashParticleL.Emitting)
             _dashParticleL.Emitting = false;
     }
 

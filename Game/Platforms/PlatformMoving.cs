@@ -5,7 +5,7 @@ using Godot;
  * @author:		Nihar
  * @company:	DeadW0Lf Games
  */
-public class PlatformMoving : KinematicBody2D
+public class PlatformMoving : KinematicBody2D // Moving Platform Using MoveAndSlide (Need to update player position)
 {
     [Export] private float _moveSpeed;
     [Export] private bool _isVertical;
@@ -15,8 +15,8 @@ public class PlatformMoving : KinematicBody2D
     private bool _isWaiting;
     private int _direction = 1;
     private Vector2 _velocity = Vector2.Zero;
-	
-	public override void _Ready()
+
+    public override void _Ready()
     {
         _isWaiting = true;
         _waitTimer = GetNode<Timer>("WaitTimer");
@@ -35,7 +35,7 @@ public class PlatformMoving : KinematicBody2D
         {
             _velocity.y = _moveSpeed * _direction;
         }
-        MoveAndSlideWithSnap(_velocity, Vector2.Zero ,Vector2.Up, infiniteInertia: true);
+        MoveAndSlideWithSnap(_velocity, Vector2.Zero, Vector2.Up, infiniteInertia: true);
     }
 
     // Signals

@@ -244,9 +244,6 @@ color_ramp = SubResource( 16 )
 [node name="PlayerTwo" type="KinematicBody2D"]
 collision_mask = 4
 script = ExtResource( 1 )
-_gravity = 1200.0
-_walkSpeed = 200.0
-_knockBackSpeed = 150.0
 
 [node name="Body" type="Node2D" parent="."]
 __meta__ = {
@@ -257,7 +254,7 @@ __meta__ = {
 z_index = 1
 frames = ExtResource( 3 )
 animation = "Idle"
-frame = 3
+frame = 1
 playing = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
@@ -355,13 +352,13 @@ collision_mask = 4
 [node name="FloorChecker1" type="RayCast2D" parent="WallChecker"]
 position = Vector2( -6, 7 )
 enabled = true
-cast_to = Vector2( 0, 10 )
+cast_to = Vector2( 0, 12 )
 collision_mask = 4
 
 [node name="FloorChecker2" type="RayCast2D" parent="WallChecker"]
 position = Vector2( 6, 7 )
 enabled = true
-cast_to = Vector2( 0, 10 )
+cast_to = Vector2( 0, 12 )
 collision_mask = 4
 
 [node name="StompHitBox" type="Area2D" parent="."]

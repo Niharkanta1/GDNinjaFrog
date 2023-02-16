@@ -254,7 +254,7 @@ __meta__ = {
 z_index = 1
 frames = ExtResource( 3 )
 animation = "Idle"
-frame = 1
+frame = 3
 playing = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Body"]
@@ -316,6 +316,10 @@ one_shot = true
 one_shot = true
 
 [node name="KnockBackTimer" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
+[node name="FallThroughTimer" type="Timer" parent="Timers"]
 wait_time = 0.1
 one_shot = true
 
@@ -397,4 +401,5 @@ process_material = SubResource( 13 )
 texture = ExtResource( 6 )
 
 [connection signal="timeout" from="Timers/HitTimer" to="." method="OnTimerTimeout"]
+[connection signal="timeout" from="Timers/FallThroughTimer" to="." method="OnFallThroughTimerTimeout"]
 [connection signal="area_shape_entered" from="StompHitBox" to="." method="OnJumpHitBoxAreaShapeEntered"]

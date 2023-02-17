@@ -20,7 +20,7 @@ public class AngryPig : Enemy
     private Vector2 _wayPointPos;
     private Vector2 _velocity;
 
-    private const float WaypointMinDistance = 5.0f;
+    private const float _waypointMinDistance = 5.0f;
     private State _currentState;
 
     private enum State { Idle, Run, Walk, Hit }
@@ -58,7 +58,7 @@ public class AngryPig : Enemy
                 throw new ArgumentOutOfRangeException();
         }
 
-        if (distance >= WaypointMinDistance)
+        if (distance >= _waypointMinDistance)
         {
             _velocity.x = Math.Sign(direction.x) * moveSpeed;
             _velocity.y = Math.Min(_velocity.y + _gameSettings.Gravity, _gameSettings.TerminalVelocity);

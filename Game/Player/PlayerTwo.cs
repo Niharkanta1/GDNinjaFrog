@@ -566,6 +566,8 @@ public class PlayerTwo : Agent
         GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
         GetNode<Node2D>("Body").Visible = false;
         GetNode<Area2D>("HitboxArea").Monitorable = false;
+        GetNode<Label>("P2Label").Visible = false;
+        _stompHitBox.GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
         _deathParticle.Position = Position;
         _deathParticle.Scale = new Vector2(_lookDirection, 1);
         _deathParticle.Emitting = true;

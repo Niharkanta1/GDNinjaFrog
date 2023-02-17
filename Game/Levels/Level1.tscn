@@ -29,7 +29,7 @@ position = Vector2( 348, 241 )
 _waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
 
 [node name="AnimatedSprite" parent="Enemies/AngryPig" index="0"]
-frame = 9
+frame = 12
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 76, 212 )

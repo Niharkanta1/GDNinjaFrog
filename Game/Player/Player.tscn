@@ -432,7 +432,7 @@ nodes/MoveY/position = Vector2( 280, -140 )
 nodes/WallSlide/node = SubResource( 66 )
 nodes/WallSlide/position = Vector2( 720, -140 )
 nodes/output/position = Vector2( 1260, -160 )
-node_connections = [ "Hit", 0, "WallSlide", "Hit", 1, "Animation 4", "DoubleJump", 0, "MoveY", "DoubleJump", 1, "Animation 3", "WallSlide", 0, "DoubleJump", "WallSlide", 1, "Animation 5", "MoveY", 0, "Animation", "MoveY", 1, "MoveX", "MoveY", 2, "Animation 2", "output", 0, "Hit" ]
+node_connections = [ "MoveY", 0, "Animation", "MoveY", 1, "MoveX", "MoveY", 2, "Animation 2", "Hit", 0, "WallSlide", "Hit", 1, "Animation 4", "WallSlide", 0, "DoubleJump", "WallSlide", 1, "Animation 5", "DoubleJump", 0, "MoveY", "DoubleJump", 1, "Animation 3", "output", 0, "Hit" ]
 
 [sub_resource type="RectangleShape2D" id=63]
 extents = Vector2( 6, 1.5 )
@@ -445,6 +445,7 @@ script = ExtResource( 8 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 1 )
 animation = "Idle"
+frame = 8
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

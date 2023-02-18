@@ -506,6 +506,7 @@ public class PlayerTwo : Agent
     // Inherited Method Overrides
     public override void GetHit(int damage, int direction = 1)
     {
+        GD.Print(CanBeHit);
         if (!CanBeHit) return;
         GD.Print(" Health: " + Health + " KnockBack Direction: " + direction);
         _knockBackDirection = direction;
@@ -517,6 +518,7 @@ public class PlayerTwo : Agent
         else
         {
             _hitTimer.WaitTime = _iFrameTime;
+            CanBeHit = false;
             _hitTimer.Start();
             _animatedSprite.Modulate = new Color(1, 1, 1, 0.3f);
             CurrentState = States.Hit;
@@ -538,7 +540,6 @@ public class PlayerTwo : Agent
 
     public void OnTimerTimeout()
     {
-        _hitTimer.Stop();
         _animatedSprite.Modulate = _originalColor;
         CanBeHit = true;
     }
@@ -565,7 +566,7 @@ public class PlayerTwo : Agent
     {
         GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
         GetNode<Node2D>("Body").Visible = false;
-        GetNode<Area2D>("HitboxArea").Monitorable = false;
+        GetNode<Area2D>("HitBoxArea").Monitorable = false;
         GetNode<Label>("P2Label").Visible = false;
         _stompHitBox.GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
         _deathParticle.Position = Position;

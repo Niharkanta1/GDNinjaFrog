@@ -44,17 +44,17 @@ region = Rect2( 48, 0, 16, 32 )
 animations = [ {
 "frames": [ SubResource( 2 ) ],
 "loop": true,
-"name": "off",
+"name": "Off",
 "speed": 5.0
 }, {
 "frames": [ SubResource( 3 ), SubResource( 4 ), SubResource( 5 ) ],
 "loop": true,
-"name": "on",
+"name": "On",
 "speed": 10.0
 }, {
 "frames": [ SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ) ],
 "loop": false,
-"name": "trigger",
+"name": "Trigger",
 "speed": 10.0
 } ]
 
@@ -71,15 +71,28 @@ shape = SubResource( 1 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 6 )
-animation = "on"
+animation = "On"
 frame = 2
 playing = true
 
 [node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 128
+monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2( 0, -7 )
 shape = SubResource( 11 )
 disabled = true
 
+[node name="ToggleTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="TriggerTimer" type="Timer" parent="."]
+wait_time = 0.4
+one_shot = true
+
 [connection signal="area_shape_entered" from="Area2D" to="." method="OnArea2DAreaShapeEntered"]
+[connection signal="timeout" from="ToggleTimer" to="." method="OnToggleTimerTimeout"]
+[connection signal="timeout" from="TriggerTimer" to="." method="OnTriggerTimerTimeout"]

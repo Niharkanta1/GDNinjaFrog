@@ -63,6 +63,8 @@ _data = {
 [node name="Platform" type="Node"]
 
 [node name="PlatformBody" type="KinematicBody2D" parent="."]
+collision_layer = 4
+collision_mask = 3
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="PlatformBody"]
 frames = SubResource( 2 )

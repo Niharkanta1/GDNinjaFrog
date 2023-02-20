@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Art/Textures/Background/Blue.png" type="Texture" id=1]
 [ext_resource path="res://Game/Levels/Terrain.tres" type="TileSet" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Game/Player/PlayerTwo.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Game/Traps/Spikes.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Game/Traps/FireTrap.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Game/Platforms/PlatformV3.tscn" type="PackedScene" id=8]
 
 [node name="Level1" type="Node2D"]
 
@@ -31,7 +32,7 @@ position = Vector2( 348, 241 )
 _waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
 
 [node name="AnimatedSprite" parent="Enemies/AngryPig" index="0"]
-frame = 10
+frame = 5
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 76, 212 )
@@ -77,6 +78,9 @@ position = Vector2( 537, 257 )
 
 [node name="Spikes2" parent="." instance=ExtResource( 6 )]
 position = Vector2( 552, 257 )
+
+[node name="PlatformV3" parent="." instance=ExtResource( 8 )]
+position = Vector2( 431, 204 )
 
 [editable path="Enemies/AngryPig"]
 [editable path="MovingPlatform"]

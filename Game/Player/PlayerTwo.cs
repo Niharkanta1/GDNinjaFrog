@@ -115,7 +115,6 @@ public class PlayerTwo : Agent
                 {
                     if (!_isFallingThrough)
                     {
-                        GD.Print("Falling Through");
                         _isFallingThrough = true;
                         SetCollisionMaskBit(2, false);
                         _fallThroughTimer.Start();

@@ -61,7 +61,8 @@ radius = 19.0
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="SawBody"]
 frames = SubResource( 10 )
-animation = "Idle"
+animation = "Active"
+frame = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SawBody"]
 shape = SubResource( 1 )

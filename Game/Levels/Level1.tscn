@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Art/Textures/Background/Blue.png" type="Texture" id=1]
 [ext_resource path="res://Game/Levels/Terrain.tres" type="TileSet" id=2]
@@ -10,6 +10,8 @@
 [ext_resource path="res://Game/Platforms/PlatformV3.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Game/Platforms/PlatformV3-Alternative.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Game/Traps/Saw.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Game/Traps/SawAndChain.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Game/Traps/Trampoline.tscn" type="PackedScene" id=12]
 
 [node name="Level1" type="Node2D"]
 
@@ -34,7 +36,7 @@ position = Vector2( 348, 241 )
 _waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
 
 [node name="AnimatedSprite" parent="Enemies/AngryPig" index="0"]
-frame = 14
+frame = 12
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 76, 212 )
@@ -111,8 +113,14 @@ position = Vector2( 552, 257 )
 [node name="Saw" parent="." instance=ExtResource( 10 )]
 position = Vector2( 202, 497 )
 
-[node name="AnimatedSprite" parent="Saw/SawBody" index="0"]
-frame = 4
+[node name="AnimatedSprite" parent="Saw/SawBody" index="1"]
+frame = 7
+
+[node name="SawAndChain" parent="." instance=ExtResource( 11 )]
+position = Vector2( 274, 497 )
+
+[node name="Trampoline" parent="." instance=ExtResource( 12 )]
+position = Vector2( 21, 544 )
 
 [editable path="Enemies/AngryPig"]
 [editable path="Platforms/MovingPlatform"]

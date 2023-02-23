@@ -5,9 +5,10 @@ using Godot;
  * @author:		Nihar
  * @company:	DeadW0Lf Games
  */
-public class PlatformV3 : Node2D
+public class SawAndChain : Node2D
 {
-    [Export] private float _moveToDistance = 100;
+    [Export] private int _spikeDamage = 1;
+	[Export] private float _moveToDistance = 100;
     [Export] private float _moveSpeed = 800.0f;
     [Export] private int _spriteSize = 8;
 
@@ -110,7 +111,13 @@ public class PlatformV3 : Node2D
         _chainSprite.RegionRect = new Rect2(Vector2.Zero, _chainSize);
         _chainSprite.Offset = _chainOffset;
     }
-
-
-
+	
+    public void OnSawAreaShapeEntered(RID areaRid, Area2D area, int bodyShapeIndex, int localShapeIndex)
+    {
+        if (area.Owner is PlayerTwo playerTwo)
+        {
+            playerTwo.GetHit(_spikeDamage, Math.Sign(playerTwo.Position.x - Position.x));
+        }
+    }
+	
 }

@@ -1,67 +1,88 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Art/Textures/Traps/Trampoline/Jump (28x28).png" type="Texture" id=1]
 [ext_resource path="res://Art/Textures/Traps/Trampoline/Idle.png" type="Texture" id=2]
+[ext_resource path="res://Game/Traps/Trampoline.cs" type="Script" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 10, 3.5 )
-
-[sub_resource type="AtlasTexture" id=3]
-atlas = ExtResource( 1 )
-region = Rect2( 0, 0, 28, 28 )
-
-[sub_resource type="AtlasTexture" id=4]
-atlas = ExtResource( 1 )
-region = Rect2( 28, 0, 28, 28 )
-
-[sub_resource type="AtlasTexture" id=5]
-atlas = ExtResource( 1 )
-region = Rect2( 56, 0, 28, 28 )
-
-[sub_resource type="AtlasTexture" id=6]
-atlas = ExtResource( 1 )
-region = Rect2( 84, 0, 28, 28 )
+extents = Vector2( 10.5, 5 )
 
 [sub_resource type="AtlasTexture" id=7]
 atlas = ExtResource( 1 )
-region = Rect2( 112, 0, 28, 28 )
+region = Rect2( 0, 0, 28, 28 )
 
 [sub_resource type="AtlasTexture" id=8]
 atlas = ExtResource( 1 )
-region = Rect2( 140, 0, 28, 28 )
+region = Rect2( 28, 0, 28, 28 )
 
 [sub_resource type="AtlasTexture" id=9]
 atlas = ExtResource( 1 )
-region = Rect2( 168, 0, 28, 28 )
+region = Rect2( 56, 0, 28, 28 )
 
 [sub_resource type="AtlasTexture" id=10]
 atlas = ExtResource( 1 )
-region = Rect2( 196, 0, 28, 28 )
+region = Rect2( 84, 0, 28, 28 )
 
 [sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 1 )
+region = Rect2( 112, 0, 28, 28 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 1 )
+region = Rect2( 140, 0, 28, 28 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 1 )
+region = Rect2( 168, 0, 28, 28 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 1 )
+region = Rect2( 196, 0, 28, 28 )
+
+[sub_resource type="AtlasTexture" id=15]
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 28, 28 )
 
-[sub_resource type="SpriteFrames" id=2]
+[sub_resource type="SpriteFrames" id=5]
 animations = [ {
-"frames": [ SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ) ],
-"loop": true,
-"name": "bounce",
+"frames": [ SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 14 ) ],
+"loop": false,
+"name": "Bounce",
 "speed": 10.0
 }, {
-"frames": [ SubResource( 11 ) ],
+"frames": [ SubResource( 15 ) ],
 "loop": true,
-"name": "idle",
+"name": "Idle",
 "speed": 5.0
 } ]
 
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 3.5, 11.5 )
+
 [node name="Trampoline" type="StaticBody2D"]
+collision_layer = 4
+script = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0, -9.5 )
+position = Vector2( -0.5, -5 )
 shape = SubResource( 1 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 0, -14 )
-frames = SubResource( 2 )
-animation = "idle"
+frames = SubResource( 5 )
+animation = "Idle"
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="ActivationCollision" type="CollisionShape2D" parent="Area2D"]
+position = Vector2( -0.5, -9.5 )
+rotation = 1.5708
+shape = SubResource( 2 )
+
+[node name="BounceTimer" type="Timer" parent="."]
+wait_time = 0.8
+one_shot = true
+
+[connection signal="body_shape_entered" from="Area2D" to="." method="OnArea2DBodyShapeEntered"]
+[connection signal="timeout" from="BounceTimer" to="." method="OnBounceTimerTimeout"]

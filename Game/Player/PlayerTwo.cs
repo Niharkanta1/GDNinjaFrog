@@ -505,9 +505,7 @@ public class PlayerTwo : Agent
     // Inherited Method Overrides
     public override void GetHit(int damage, int direction = 1)
     {
-        GD.Print(CanBeHit);
         if (!CanBeHit) return;
-        GD.Print(" Health: " + Health + " KnockBack Direction: " + direction);
         _knockBackDirection = direction;
         Health -= damage;
         if (Health <= 0)
@@ -524,6 +522,12 @@ public class PlayerTwo : Agent
         }
     }
 
+    public void BouncePlayer(float bounceSpeed)
+    {
+        CurrentState = States.Jump;
+        _velocity.y = bounceSpeed;
+    }
+
     // Signals
 
     public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex)
@@ -533,7 +537,7 @@ public class PlayerTwo : Agent
         if (!enemy.CanBeHit)
             return;
         if (!(_stompHitBox.GlobalPosition.y < area.GlobalPosition.y)) return;
-        _velocity.y = _stompBounceSpeed;
+        BouncePlayer(_stompBounceSpeed);
         enemy.GetHit(_stompDamage);
     }
 

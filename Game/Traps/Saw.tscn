@@ -116,7 +116,7 @@ shape = SubResource( 15 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="SawBody"]
 frames = SubResource( 10 )
 animation = "Active"
-frame = 1
+frame = 4
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SawBody"]

@@ -16,7 +16,8 @@ public class PlayerTwo : Agent
     private Area2D _stompHitBox;
 
     [Export] private float _gravity = 1200;
-    [Export] private float _fallGravityMultiplier = 1.5f;
+    [Export] private float _fallGravityMultiplier = 1.3f;
+    [Export] private float _flyingGravity = 0.3f;
     [Export] private float _jumpSpeed = -350;
     [Export] private float _wallJumpSpeed = -350;
     [Export] private float _wallJumpMoveSpeed = 150;
@@ -41,6 +42,17 @@ public class PlayerTwo : Agent
     private bool _isKnockedBack;
     private bool _isFallingThrough;
     private bool _hitAnimationFinished = true;
+    private bool _isInFlyZone;
+
+    public bool IsInFlyZone
+    {
+        get => _isInFlyZone;
+        set
+        {
+            _velocity.y = 0f;
+            _isInFlyZone = value;
+        }
+    }
 
     private readonly Vector2 _snapVector = Vector2.Down * 16;
     private States _state;
@@ -129,7 +141,7 @@ public class PlayerTwo : Agent
                 {
                     CurrentState = States.Dash;
                 }
-                
+
                 break;
 
             // Walk State
@@ -168,7 +180,7 @@ public class PlayerTwo : Agent
                     CurrentState = States.Idle;
                     return;
                 }
-                inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, _snapVector, _fallGravityMultiplier);
+                inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, _snapVector, IsInFlyZone ? _flyingGravity : _fallGravityMultiplier);
 
                 // Handle Transitions:
                 if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump))
@@ -387,8 +399,12 @@ public class PlayerTwo : Agent
 
     private void Move() => _velocity = MoveAndSlide(_velocity, Vector2.Up);
     private void Move(Vector2 snap) => _velocity = MoveAndSlideWithSnap(_velocity, snap, Vector2.Up, infiniteInertia: false);
-    private void ApplyGravity(float delta, float gravityMultiplier = 1) =>
+    private void ApplyGravity(float delta, float gravityMultiplier = 1)
+    {
+        GD.Print(gravityMultiplier);
         _velocity.y += _gravity * gravityMultiplier * delta;
+    }
+
 
     private bool IsNextToWall() => IsNextToLeftWall() || IsNextToRightWall();
     private bool IsNextToRightWall() => _rightWallChecker1.IsColliding() && _rightWallChecker2.IsColliding();
@@ -423,6 +439,8 @@ public class PlayerTwo : Agent
             case States.Fall:
                 if (_canJump)
                     _coyoteTimer.Start();
+                if (IsInFlyZone)
+                    _velocity.y = 0f;
                 _animationPlayer.Play("Fall");
                 break;
 
@@ -526,6 +544,11 @@ public class PlayerTwo : Agent
     {
         CurrentState = States.Jump;
         _velocity.y = bounceSpeed;
+    }
+
+    public void GravityModifier(float modifier)
+    {
+
     }
 
     // Signals

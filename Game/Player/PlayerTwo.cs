@@ -44,16 +44,6 @@ public class PlayerTwo : Agent
     private bool _hitAnimationFinished = true;
     private bool _isInFlyZone;
 
-    public bool IsInFlyZone
-    {
-        get => _isInFlyZone;
-        set
-        {
-            _velocity.y = 0f;
-            _isInFlyZone = value;
-        }
-    }
-
     private readonly Vector2 _snapVector = Vector2.Down * 16;
     private States _state;
 
@@ -180,7 +170,7 @@ public class PlayerTwo : Agent
                     CurrentState = States.Idle;
                     return;
                 }
-                inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, _snapVector, IsInFlyZone ? _flyingGravity : _fallGravityMultiplier);
+                inputDirectionX = HorizontalMovementWithSnap(delta, _walkSpeed, _snapVector, _isInFlyZone ? _flyingGravity : _fallGravityMultiplier);
 
                 // Handle Transitions:
                 if (Input.IsActionJustPressed("jump") && (_canJump || _canDoubleJump))
@@ -439,7 +429,7 @@ public class PlayerTwo : Agent
             case States.Fall:
                 if (_canJump)
                     _coyoteTimer.Start();
-                if (IsInFlyZone)
+                if (_isInFlyZone)
                     _velocity.y = 0f;
                 _animationPlayer.Play("Fall");
                 break;
@@ -546,9 +536,11 @@ public class PlayerTwo : Agent
         _velocity.y = bounceSpeed;
     }
 
-    public void GravityModifier(float modifier)
+    public void SetPlayerIsFlying(bool value)
     {
-
+        if (value)
+            _velocity.y = 0f;
+        _isInFlyZone = value;
     }
 
     // Signals

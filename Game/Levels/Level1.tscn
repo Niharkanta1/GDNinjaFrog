@@ -37,7 +37,7 @@ position = Vector2( 348, 241 )
 _waypoints = [ NodePath("../../Waypoints/Waypoint1"), NodePath("../../Waypoints/Waypoint2") ]
 
 [node name="AnimatedSprite" parent="Enemies/AngryPig" index="0"]
-frame = 8
+frame = 4
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 76, 212 )
@@ -113,6 +113,9 @@ position = Vector2( 552, 257 )
 
 [node name="Saw" parent="." instance=ExtResource( 10 )]
 position = Vector2( 202, 497 )
+
+[node name="AnimatedSprite" parent="Saw/SawBody" index="1"]
+frame = 2
 
 [node name="SawAndChain" parent="." instance=ExtResource( 11 )]
 position = Vector2( 274, 497 )

@@ -53,8 +53,11 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [sub_resource type="ParticlesMaterial" id=10]
-emission_shape = 2
-emission_box_extents = Vector3( 13, 45, 1 )
+emission_shape = 5
+emission_ring_radius = 18.0
+emission_ring_inner_radius = 2.0
+emission_ring_height = 20.0
+emission_ring_axis = Vector3( 0, 0, 1 )
 flag_disable_z = true
 gravity = Vector3( 0, -98, 0 )
 orbit_velocity = 0.0
@@ -74,7 +77,6 @@ script = ExtResource( 4 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 7 )
 animation = "Active"
-frame = 1
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -88,7 +90,12 @@ shape = SubResource( 8 )
 
 [node name="Particles2D" type="Particles2D" parent="Area2D"]
 material = SubResource( 9 )
-position = Vector2( 1, -45 )
+position = Vector2( 0, -8 )
+amount = 20
+lifetime = 1.6
+speed_scale = 2.0
+explosiveness = 0.2
+visibility_rect = Rect2( -50, -140, 100, 150 )
 process_material = SubResource( 10 )
 texture = ExtResource( 3 )
 

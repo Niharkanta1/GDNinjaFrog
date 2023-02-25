@@ -391,7 +391,6 @@ public class PlayerTwo : Agent
     private void Move(Vector2 snap) => _velocity = MoveAndSlideWithSnap(_velocity, snap, Vector2.Up, infiniteInertia: false);
     private void ApplyGravity(float delta, float gravityMultiplier = 1)
     {
-        GD.Print(gravityMultiplier);
         _velocity.y += _gravity * gravityMultiplier * delta;
     }
 

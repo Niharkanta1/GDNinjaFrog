@@ -14,28 +14,32 @@ public class SpikeHead : Node2D
     [Export] private float _distanceThreshold = 2.0f;
     [Export] private float _animationDuration = 0.4f;
 
-    private int currentPosIndex = 0;
+    private int _currentPosIndex = 0;
 
     private KinematicBody2D _spikeHead;
     private Tween _moveTween;
     private AnimatedSprite _animatedSprite;
-    private Timer _timer;
+    private Timer _timer, _smashTimer;
     private RayCast2D _left, _right, _up, _down;
 
-    private State _state;
-    private Direction _collisionDirection, _moveDirection;
-    private enum State { Idle, Blink, Tween, Move, Smash };
+    private State _nextState;
+    private Direction _collisionDirection;
+    private Vector2 _moveDirection;
+    private enum State { Idle, Tween, Move };
     private enum Direction { Left, Right, Up, Down };
 
     private Position2D[] _moveToPositions;
     private Vector2 _currentPos;
+    private bool _isColliding;
 
+    
     public override void _Ready()
     {
         _spikeHead = GetNode<KinematicBody2D>("KinematicBody2D");
         _animatedSprite = GetNode<AnimatedSprite>("KinematicBody2D/AnimatedSprite");
         _moveTween = GetNode<Tween>("MoveTween");
-        _timer = GetNode<Timer>("Timer");
+        _timer = GetNode<Timer>("Timers/SimpleTimer");
+        _smashTimer = GetNode<Timer>("Timers/SmashTimer");
 
         _left = GetNode<RayCast2D>("KinematicBody2D/RayCasts/Left");
         _right = GetNode<RayCast2D>("KinematicBody2D/RayCasts/Right");
@@ -47,14 +51,13 @@ public class SpikeHead : Node2D
             GD.PrintErr("No Move Positions are set for ::" + this.Name);
         }
         _moveToPositions = new Position2D[_movePositions.Length];
-        int i = 0;
+        var i = 0;
         foreach (var item in _movePositions)
         {
             _moveToPositions[i++] = GetNode<Position2D>(item);
         }
-        GD.Print("Move To positions size::" + _moveToPositions.Length);
         _animatedSprite.Play("Idle");
-        _state = State.Idle;
+        _nextState = State.Idle;
         _timer.Start();
         _currentPos = Vector2.Zero;
     }
@@ -63,76 +66,115 @@ public class SpikeHead : Node2D
     {
         UpdateMoveDirection();
         UpdateRayCastCollisions();
-        if (_state != State.Tween)
+        if (_isColliding)
+        {
+            _isColliding = false;
+            switch (_collisionDirection)
+            {
+                case Direction.Left:
+                    _animatedSprite.Play("Left");
+                    _smashTimer.Start();
+                    break;
+                case Direction.Right:
+                    _animatedSprite.Play("Right");
+                    _smashTimer.Start();
+                    break;
+                case Direction.Up:
+                    _animatedSprite.Play("Up");
+                    _smashTimer.Start();
+                    break;
+                case Direction.Down:
+                    _animatedSprite.Play("Down");
+                    _smashTimer.Start();
+                    break;
+            }
+        }
+        if (_nextState != State.Tween)
             return;
-        _state = State.Move;
+        _nextState = State.Move;
         StartMoveTween();
     }
 
     private void StartMoveTween()
     {
-        var duration = this.Position.DistanceTo(_moveToPositions[currentPosIndex].Position) / _moveSpeed * 16;
+        var duration = _currentPos.DistanceTo(_moveToPositions[_currentPosIndex].Position) / _moveSpeed * 16;
         _moveTween.InterpolateProperty(
             _spikeHead,
             "position",
             _currentPos,
-            _moveToPositions[currentPosIndex].Position,
+            _moveToPositions[_currentPosIndex].Position,
             duration,
             Tween.TransitionType.Linear,
             Tween.EaseType.InOut,
             _idleDuration
         );
-        _moveTween.Start();
+        _moveTween.Start(); // Starting Movement
         _timer.WaitTime = duration;
         _timer.Start();
-        _currentPos = _moveToPositions[currentPosIndex].Position;
-        if (currentPosIndex == _moveToPositions.Length - 1)
-            currentPosIndex = 0;
+        _currentPos = _moveToPositions[_currentPosIndex].Position;
+        if (_currentPosIndex == _moveToPositions.Length - 1)
+            _currentPosIndex = 0;
         else
-            currentPosIndex++;
+            _currentPosIndex++;
     }
 
     private void UpdateMoveDirection()
     {
-        var dir = this.Position.DirectionTo(_moveToPositions[currentPosIndex].Position);
+        _moveDirection = _currentPos.DirectionTo(_moveToPositions[_currentPosIndex].Position);
     }
 
     private void UpdateRayCastCollisions()
     {
-        if (_left.IsColliding())
+        if (_left.IsColliding() && _moveDirection == Vector2.Up)
+        { 
             _collisionDirection = Direction.Left;
-        if (_right.IsColliding())
+            _isColliding = true;
+        }
+        else if (_right.IsColliding() && _moveDirection == Vector2.Down)
+        {
             _collisionDirection = Direction.Right;
-        if (_up.IsColliding())
+            _isColliding = true;
+        }
+        else if (_up.IsColliding() && _moveDirection == Vector2.Right)
+        {
             _collisionDirection = Direction.Up;
-        if (_down.IsColliding())
+            _isColliding = true;
+        }
+        else if (_down.IsColliding() && _moveDirection == Vector2.Left)
+        {
             _collisionDirection = Direction.Down;
+            _isColliding = true;
+        }
+        else
+        {
+            _isColliding = false;
+        }
     }
-
 
     // Signals
 
-    public void OnTimerTimeout()
+    public void OnSimpleTimerTimeout()
     {
-        switch (_state)
+        switch (_nextState) // checking the current state and transition to next state
         {
             case State.Idle:
                 _animatedSprite.Play("Idle");
-                _state = State.Tween;
+                _nextState = State.Tween;
                 _timer.Start();
                 break;
 
             case State.Move:
-                _state = State.Idle;
-                _timer.WaitTime = _animationDuration;
+                _nextState = State.Idle;
+                _timer.WaitTime = _idleDuration;
                 _timer.Start();
-                break;
-
-            case State.Smash:
-                _animatedSprite.Play("Idle");
                 break;
         }
 
+    }
+
+    public void OnSmashTimerTimeout()
+    {
+        _animatedSprite.Play("Idle");
     }
 
     public void OnArea2DAreaShapeEntered(RID areaRid, Area2D area, int bodyShapeIndex, int localShapeIndex)

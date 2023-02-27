@@ -33,18 +33,18 @@ public class PlatformV3 : Node2D
         _moveTween = GetNode<Tween>("MoveTween");
         _animatedSprite = GetNode<AnimatedSprite>("KinematicBody2D/AnimatedSprite");
         _chainSprite = GetNode<Sprite>("ChainPosition/Sprite");
-        
+
         _animatedSprite.Play("Active");
-        
+
         InitializeChainPath();
         InitializeTween();
     }
-    
+
     public override void _PhysicsProcess(float delta)
     {
         _platformBody.Position = _platformBody.Position.LinearInterpolate(_follow, 0.075f);
     }
-    
+
     private void InitializeTween()
     {
         var duration = _moveTo.Length() / _moveSpeed * 16;
@@ -71,7 +71,7 @@ public class PlatformV3 : Node2D
 
         _moveTween.Start();
     }
-    
+
     private void InitializeChainPath()
     {
         var extraChainSprite = _moveToDistance % _spriteSize;
@@ -101,7 +101,7 @@ public class PlatformV3 : Node2D
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
+
         /* Default:
          * Chain Size Y =  (-Move To Y) + 8
          * Offset Y = Chain Size Y / 2

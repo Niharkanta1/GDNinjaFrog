@@ -105,6 +105,8 @@ dash={
 2d_physics/layer_3="World"
 2d_physics/layer_4="EnemyHitbox"
 2d_physics/layer_5="EnemyJumpHitbox"
+2d_physics/layer_6="Platforms"
+2d_physics/layer_7="Objects"
 2d_physics/layer_8="PlayerHitbox"
 
 [mono]

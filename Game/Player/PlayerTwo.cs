@@ -209,7 +209,7 @@ public class PlayerTwo : Agent
                     return;
                 }
 
-                inputDirectionX = HorizontalMovement(delta, _walkSpeed);
+                inputDirectionX = HorizontalMovement(delta, _walkSpeed, _isInFlyZone ? _flyingGravity : 1);
 
                 // Handle Transitions:
                 if (Input.IsActionJustPressed("jump") && _canDoubleJump)
@@ -259,7 +259,7 @@ public class PlayerTwo : Agent
                     CurrentState = States.Fall;
                     return;
                 }
-                inputDirectionX = HorizontalMovement(delta, _walkSpeed);
+                inputDirectionX = HorizontalMovement(delta, _walkSpeed, _isInFlyZone ? _flyingGravity : 1);
 
                 // Handle Transitions:
                 if (IsNextToWall() && !IsPlayerOnFloor() &&

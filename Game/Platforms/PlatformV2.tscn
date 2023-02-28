@@ -62,7 +62,7 @@ _data = {
 
 [node name="Platform" type="Node"]
 
-[node name="PlatformBody" type="KinematicBody2D" parent="."]
+[node name="PlatformBody" type="KinematicBody2D" parent="." groups=["Platform"]]
 collision_layer = 32
 collision_mask = 3
 

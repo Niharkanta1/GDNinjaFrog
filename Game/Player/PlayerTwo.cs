@@ -544,6 +544,14 @@ public class PlayerTwo : Agent
 
     // Signals
 
+    public void OnSmashAreaBodyShapeEntered(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)
+    {
+        if (body.IsInGroup("Platform") || body is TileMap)
+        {
+            CurrentState = States.Die;
+        }
+    }
+    
     public void OnJumpHitBoxAreaShapeEntered(RID areaRid, Area2D area, int areaShapeIndex, int localShapeIndex)
     {
         if (!(area.Owner is Enemy)) return;

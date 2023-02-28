@@ -5,7 +5,7 @@ using Godot;
  * @author:		Nihar
  * @company:	DeadW0Lf Games
  */
-public class SpikeHead : Node2D
+public class RockHead : Node2D
 {
     [Export] private int _spikeHeadDamage = 1;
     [Export] private float _moveSpeed = 2000f;
@@ -61,7 +61,7 @@ public class SpikeHead : Node2D
         _timer.Start();
         _currentPos = Vector2.Zero;
     }
-
+    
     public override void _PhysicsProcess(float delta)
     {
         UpdateMoveDirection();
@@ -126,22 +126,26 @@ public class SpikeHead : Node2D
     private void UpdateRayCastCollisions()
     {
         if (_left.IsColliding() && _moveDirection == Vector2.Up)
-        { 
+        {
+            GD.Print("Left");
             _collisionDirection = Direction.Left;
             _isColliding = true;
         }
         else if (_right.IsColliding() && _moveDirection == Vector2.Down)
         {
+            GD.Print("Right");
             _collisionDirection = Direction.Right;
             _isColliding = true;
         }
         else if (_up.IsColliding() && _moveDirection == Vector2.Right)
         {
+            GD.Print("Up");
             _collisionDirection = Direction.Up;
             _isColliding = true;
         }
         else if (_down.IsColliding() && _moveDirection == Vector2.Left)
         {
+            GD.Print("Down");
             _collisionDirection = Direction.Down;
             _isColliding = true;
         }
@@ -176,12 +180,5 @@ public class SpikeHead : Node2D
     {
         _animatedSprite.Play("Idle");
     }
-
-    public void OnArea2DAreaShapeEntered(RID areaRid, Area2D area, int bodyShapeIndex, int localShapeIndex)
-    {
-        if (area.Owner is PlayerTwo playerTwo)
-        {
-            playerTwo.GetHit(_spikeHeadDamage, Math.Sign(playerTwo.Position.x - Position.x));
-        }
-    }
+    
 }

@@ -129,7 +129,6 @@ animations = [ {
 
 [node name="SpikeHead" type="Node2D"]
 script = ExtResource( 7 )
-_moveSpeed = 2000.0
 
 [node name="KinematicBody2D" type="KinematicBody2D" parent="."]
 collision_layer = 0
@@ -142,7 +141,7 @@ shape = SubResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="KinematicBody2D"]
 frames = SubResource( 23 )
 animation = "Idle"
-frame = 15
+frame = 2
 playing = true
 
 [node name="Area2D" type="Area2D" parent="KinematicBody2D"]
@@ -189,19 +188,6 @@ one_shot = true
 
 [node name="MoveTween" type="Tween" parent="."]
 playback_process_mode = 0
-
-[node name="SpikeHeadPositions" type="Node" parent="."]
-
-[node name="Position2D" type="Position2D" parent="SpikeHeadPositions"]
-position = Vector2( -126, 2 )
-
-[node name="Position2D2" type="Position2D" parent="SpikeHeadPositions"]
-position = Vector2( 0, -98 )
-
-[node name="Position2D3" type="Position2D" parent="SpikeHeadPositions"]
-position = Vector2( -126, -98 )
-
-[node name="Position2D4" type="Position2D" parent="SpikeHeadPositions"]
 
 [connection signal="area_shape_entered" from="KinematicBody2D/Area2D" to="." method="OnArea2DAreaShapeEntered"]
 [connection signal="timeout" from="Timers/SimpleTimer" to="." method="OnSimpleTimerTimeout"]

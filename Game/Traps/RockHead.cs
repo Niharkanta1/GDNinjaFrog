@@ -127,25 +127,21 @@ public class RockHead : Node2D
     {
         if (_left.IsColliding() && _moveDirection == Vector2.Up)
         {
-            GD.Print("Left");
             _collisionDirection = Direction.Left;
             _isColliding = true;
         }
         else if (_right.IsColliding() && _moveDirection == Vector2.Down)
         {
-            GD.Print("Right");
             _collisionDirection = Direction.Right;
             _isColliding = true;
         }
         else if (_up.IsColliding() && _moveDirection == Vector2.Right)
         {
-            GD.Print("Up");
             _collisionDirection = Direction.Up;
             _isColliding = true;
         }
         else if (_down.IsColliding() && _moveDirection == Vector2.Left)
         {
-            GD.Print("Down");
             _collisionDirection = Direction.Down;
             _isColliding = true;
         }

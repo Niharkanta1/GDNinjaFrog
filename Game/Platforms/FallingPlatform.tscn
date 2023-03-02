@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Art/Textures/Traps/Falling Platforms/On (32x10).png" type="Texture" id=1]
 [ext_resource path="res://Art/Textures/Traps/Falling Platforms/Off.png" type="Texture" id=2]
 [ext_resource path="res://Game/Platforms/FallingPlatform.cs" type="Script" id=3]
+[ext_resource path="res://Art/Textures/Other/Dust Particle.png" type="Texture" id=4]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 1 )
@@ -44,13 +45,46 @@ extents = Vector2( 16, 2.5 )
 radius = 2.0
 height = 26.0
 
+[sub_resource type="Gradient" id=11]
+offsets = PoolRealArray( 0, 0.414286, 0.502857, 0.597143, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 0.992157, 0.992157, 1, 1, 0.992157, 0.992157, 1, 1, 0.992157, 0.992157, 1, 1, 0.992157, 0.992157, 0.992157, 0 )
+
+[sub_resource type="GradientTexture" id=12]
+gradient = SubResource( 11 )
+
+[sub_resource type="Curve" id=13]
+_data = [ Vector2( 0, 0.493182 ), 0.0, 1.79519, 0, 0, Vector2( 0.967828, 0.475 ), -2.23656, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=14]
+curve = SubResource( 13 )
+
+[sub_resource type="ParticlesMaterial" id=10]
+lifetime_randomness = 0.3
+emission_shape = 2
+emission_box_extents = Vector3( 6, 1, 1 )
+flag_disable_z = true
+spread = 60.0
+gravity = Vector3( 0, 200, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 0.3
+scale_curve = SubResource( 14 )
+color_ramp = SubResource( 12 )
+
+[sub_resource type="ParticlesMaterial" id=9]
+flag_disable_z = true
+gravity = Vector3( 0, 1000, 0 )
+angular_velocity = 10.0
+angular_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+
 [node name="FallingPlatform" type="Node2D"]
 script = ExtResource( 3 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 5 )
 animation = "Active"
-frame = 3
 playing = true
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
@@ -60,10 +94,6 @@ collision_mask = 3
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2( 0, -2.5 )
 shape = SubResource( 7 )
-
-[node name="Timer" type="Timer" parent="."]
-wait_time = 0.1
-one_shot = true
 
 [node name="ShakeTween" type="Tween" parent="."]
 
@@ -76,5 +106,32 @@ position = Vector2( 0, -4 )
 rotation = 1.5708
 shape = SubResource( 8 )
 
-[connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]
+[node name="Timers" type="Node" parent="."]
+
+[node name="FallTimer" type="Timer" parent="Timers"]
+one_shot = true
+
+[node name="Timer" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
+[node name="Particles" type="Node2D" parent="."]
+
+[node name="DustParticle" type="Particles2D" parent="Particles"]
+position = Vector2( 0, 12 )
+speed_scale = 1.5
+explosiveness = 0.2
+process_material = SubResource( 10 )
+texture = ExtResource( 4 )
+
+[node name="FallParticle" type="Particles2D" parent="Particles"]
+emitting = false
+amount = 1
+lifetime = 2.0
+one_shot = true
+process_material = SubResource( 9 )
+texture = ExtResource( 2 )
+
 [connection signal="body_shape_entered" from="Area2D" to="." method="OnArea2DBodyShapeEntered"]
+[connection signal="timeout" from="Timers/FallTimer" to="." method="OnFallTimerTimeout"]
+[connection signal="timeout" from="Timers/Timer" to="." method="OnTimerTimeout"]

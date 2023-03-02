@@ -1,8 +1,8 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Art/Textures/Traps/Fan/On (24x8).png" type="Texture" id=1]
 [ext_resource path="res://Art/Textures/Traps/Fan/Off.png" type="Texture" id=2]
-[ext_resource path="res://Art/Textures/Dust Particle.png" type="Texture" id=3]
+[ext_resource path="res://Art/Textures/Other/Dust Particle.png" type="Texture" id=3]
 [ext_resource path="res://Game/Traps/Fan.cs" type="Script" id=4]
 
 [sub_resource type="AtlasTexture" id=2]
@@ -52,6 +52,13 @@ particles_anim_h_frames = 1
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
+[sub_resource type="Gradient" id=11]
+offsets = PoolRealArray( 0, 0.742857, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0.0784314 )
+
+[sub_resource type="GradientTexture" id=12]
+gradient = SubResource( 11 )
+
 [sub_resource type="ParticlesMaterial" id=10]
 emission_shape = 5
 emission_ring_radius = 18.0
@@ -65,6 +72,7 @@ orbit_velocity_random = 0.0
 scale = 0.1
 scale_random = 0.1
 color = Color( 0.054902, 0.533333, 0.639216, 1 )
+color_ramp = SubResource( 12 )
 hue_variation_random = 0.1
 anim_speed = 3.0
 anim_offset = 0.5
@@ -77,6 +85,7 @@ script = ExtResource( 4 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 7 )
 animation = "Active"
+frame = 3
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

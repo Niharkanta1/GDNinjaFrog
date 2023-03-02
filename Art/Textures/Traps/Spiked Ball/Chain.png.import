@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Dust Particle.png-5b663d62d31a5945cdad9df6efc5adce.stex"
+path="res://.import/Chain.png-ec1a2f1e9a76c01a854a9d8c560f82f2.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Textures/Dust Particle.png"
-dest_files=[ "res://.import/Dust Particle.png-5b663d62d31a5945cdad9df6efc5adce.stex" ]
+source_file="res://Art/Textures/Traps/Spiked Ball/Chain.png"
+dest_files=[ "res://.import/Chain.png-ec1a2f1e9a76c01a854a9d8c560f82f2.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=1
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

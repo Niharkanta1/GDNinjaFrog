@@ -1,20 +1,27 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Art/Textures/Traps/Spiked Ball/Chain.png" type="Texture" id=1]
 [ext_resource path="res://Art/Textures/Traps/Spiked Ball/Spiked Ball.png" type="Texture" id=2]
+[ext_resource path="res://Game/Traps/SpikedBall.cs" type="Script" id=3]
 
 [sub_resource type="CircleShape2D" id=1]
 
-[node name="SpikedBall" type="Position2D"]
+[node name="SpikedBallPivot" type="Position2D"]
+script = ExtResource( 3 )
 
 [node name="Chain" type="Sprite" parent="."]
 texture = ExtResource( 1 )
 region_enabled = true
+region_rect = Rect2( 0, 0, 8, 80 )
 
-[node name="SpikeBall" type="KinematicBody2D" parent="."]
+[node name="SpikedBall" type="Area2D" parent="Chain"]
+collision_layer = 0
+collision_mask = 128
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="SpikeBall"]
+[node name="Sprite" type="Sprite" parent="Chain/SpikedBall"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chain/SpikedBall"]
 shape = SubResource( 1 )
 
-[node name="Sprite" type="Sprite" parent="SpikeBall"]
-texture = ExtResource( 2 )
+[connection signal="area_shape_entered" from="Chain/SpikedBall" to="." method="OnSpikedBallAreaShapeEntered"]

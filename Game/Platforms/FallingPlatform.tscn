@@ -85,6 +85,7 @@ script = ExtResource( 3 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 5 )
 animation = "Active"
+frame = 2
 playing = true
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
@@ -115,6 +116,10 @@ one_shot = true
 wait_time = 0.1
 one_shot = true
 
+[node name="ReactivateTimer" type="Timer" parent="Timers"]
+wait_time = 5.0
+one_shot = true
+
 [node name="Particles" type="Node2D" parent="."]
 
 [node name="DustParticle" type="Particles2D" parent="Particles"]
@@ -135,3 +140,4 @@ texture = ExtResource( 2 )
 [connection signal="body_shape_entered" from="Area2D" to="." method="OnArea2DBodyShapeEntered"]
 [connection signal="timeout" from="Timers/FallTimer" to="." method="OnFallTimerTimeout"]
 [connection signal="timeout" from="Timers/Timer" to="." method="OnTimerTimeout"]
+[connection signal="timeout" from="Timers/ReactivateTimer" to="." method="OnReactivateTimerTimeout"]

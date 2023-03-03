@@ -8,7 +8,7 @@ public class FallingPlatform : Node2D
 {
     private Tween _tween;
     private AnimatedSprite _sprite;
-    private Timer _timer, _fallTimer;
+    private Timer _timer, _fallTimer, _reactivateTimer;
     private Particles2D _fallParticle, _dustParticle;
     private CollisionShape2D _collisionShape2D, _activationCollisionArea;
         
@@ -34,6 +34,7 @@ public class FallingPlatform : Node2D
         _sprite = GetNode<AnimatedSprite>("AnimatedSprite");
         _timer = GetNode<Timer>("Timers/Timer");
         _fallTimer = GetNode<Timer>("Timers/FallTimer");
+        _reactivateTimer = GetNode<Timer>("Timers/ReactivateTimer");
         _fallParticle = GetNode<Particles2D>("Particles/FallParticle");
         _dustParticle = GetNode<Particles2D>("Particles/DustParticle");
         _collisionShape2D = GetNode<CollisionShape2D>("StaticBody2D/CollisionShape2D");
@@ -143,6 +144,16 @@ public class FallingPlatform : Node2D
         _collisionShape2D.Disabled = true;
         _activationCollisionArea.Disabled = true;
         _sprite.Visible = false;
+        _reactivateTimer.Start();
+    }
+
+    private void Respawn()
+    {
+        _fallParticle.Emitting = false;
+        _collisionShape2D.Disabled = false;
+        _activationCollisionArea.Disabled = false;
+        _sprite.Visible = true;
+        _isActivated = false;
     }
    
     public void OnArea2DBodyShapeEntered(RID bodyRid, Node body, int bodyShapeIndex, int localShapeIndex)
@@ -154,17 +165,25 @@ public class FallingPlatform : Node2D
         _isActivated = true;
     }
     
-    private void OnTimerTimeout()
+    public void OnTimerTimeout()
     {
         TweenFinished();
     }
 
-    private void OnFallTimerTimeout()
+    public void OnFallTimerTimeout()
     {
         StartTween();
         _sprite.Play("Off");
         _dustParticle.Emitting = false;
         _isFalling = true;
     }
-    
+
+    public void OnReactivateTimerTimeout()
+    {
+        Respawn();
+        StartTween();
+        _sprite.Play("Active");
+        _dustParticle.Emitting = true;
+    }
+
 }
